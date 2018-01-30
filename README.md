@@ -3,11 +3,11 @@ CS 408 Project - Software Testing
 
 Project Members:
 
-Chris Coraggio
-Muhammad Hamzah Farrukh
-Brad Howell
-Rizwanulla Mohammed
-Syed Ahad Sagheer
+Chris Coraggio  
+Muhammad Hamzah Farrukh  
+Brad Howell  
+Rizwanulla Mohammed  
+Syed Ahad Sagheer  
 
 # Problem Statement
 Many classic games have been ported over to mobile apps for users to pass the time. For a user to fully enjoy the nostalgia and entertainment offered by these games, they must commit a significant portion of device memory to these applications. We aim to solve this issue by creating one centralized application that bundles together three classic games: Connect Four, Tic-Tac-Toe, and Hangman, in order to provide users a fun experience while saving space on their phones. 
