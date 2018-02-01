@@ -4,7 +4,7 @@ CS 408 Project - Software Testing
 Project Members:
 
 Chris Coraggio  
-Muhammad Hamzah Farrukh  
+Muhammad Hamza Farrukh  
 Brad Howell  
 Rizwanulla Mohammed  
 Syed Ahad Sagheer  
