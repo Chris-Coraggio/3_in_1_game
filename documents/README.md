@@ -1,1 +1,1 @@
-All required Ddcuments for the class are here. 
+All required documents for the class are here. 
