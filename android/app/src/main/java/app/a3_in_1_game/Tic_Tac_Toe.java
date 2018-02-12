@@ -1,9 +1,8 @@
-//package app.a3_in_1_game;
+package app.a3_in_1_game;
 import java.util.*;
 /**
  * Created by hamza on 2/2/2018.
  */
-
 // TODO: Code this class in IntelliJ and copy the code over
 // TODO: Use STDIN and STDOUT until we meet and implement the GUI
 // TODO: Make sure code is commented and readable
@@ -11,8 +10,10 @@ import java.util.*;
 // TODO: Use 2D array to store the board
 
 public class Tic_Tac_Toe {
+public static int AiRow;
+	public static int AiCol;
 
-	
+
 	private static final char OPEN = ' ';
 	private static final char USERX = 'X';
 	private static final char COMPUTERO = 'O';
@@ -56,20 +57,22 @@ public class Tic_Tac_Toe {
 
 		//randomly generate who plays first, user or AIs
 		Random r = new Random();
-		this.currentUser = r.nextInt(2);
+		//this.currentUser = r.nextInt(2);
+		this.currentUser = 0;
 	}
 
 	//plays the game
 	public int playGame() {
+		newGame();
 		boolean forfeit = false;
 
 		//while loop here
-		while (!gameOver()) {
-			printBoard();
+		//while (!gameOver()) {
+		//	printBoard();
 
 			//if it's the players turn
 			if (currentUser == USER) {
-				Scanner s = new Scanner(System.in);
+			//	Scanner s = new Scanner(System.in);
 				int option = 0;
 
 				//select to play or forfeit
@@ -77,11 +80,12 @@ public class Tic_Tac_Toe {
 					System.out.println("Select an action: ");
 					System.out.println("1) Take a turn");
 					System.out.println("2) Forfeit the game");
-					option = s.nextInt();
+					//option = s.nextInt();
+					option = 1;
 				} while (option < 1 || option > 2);
 
 				if (option == 1) {
-					playerTurn();
+					//playerTurn(int );
 				}
 
 				else {
@@ -91,20 +95,20 @@ public class Tic_Tac_Toe {
 			}
 
 			// it's the AI's turn
-			else {
-				computerTurn();
-			}
+		//	else {
+			//	computerTurn();
+			//}
 
 			//if player forfeits, end this shit.
-			if (forfeit) {
-				break;
-			}
+			//if (forfeit) {
+			//	break;
+			//}
 
 			//update the current user
 			this.currentUser = (++currentUser % 2);
-		}
-		printBoard();
-		System.out.println("The Game has reached its conclusion");
+		//}
+		//printBoard();
+		//System.out.println("The Game has reached its conclusion");
 		return 1;
 	}
 
@@ -116,7 +120,7 @@ public class Tic_Tac_Toe {
 			this.board[row][col] = USERX;
 
 			//update the userSpaces array with the move made
-			this.userSpaces[userIndex++] = "" + row + col;
+			//this.userSpaces[userIndex++] = "" + row + col;
 		}
 
 		//player = 1, AI, palce o
@@ -153,33 +157,36 @@ public class Tic_Tac_Toe {
 	}
 
 	//make the User's move
-	public void playerTurn() {
-		int row = 0;
-		int col = 0;
-		Scanner s = new Scanner(System.in);
-		do {
+	public void playerTurn(int row, int col) {
+		//int row = 0;
+		//int col = 0;
+		//Scanner s = new Scanner(System.in);
+		//do {
 
 			//select a row
-			do {
-				System.out.println("Select a row: ");
-				row = s.nextInt();
-			} while (row < 0 || row > 2);
+		//	do {
+		//		System.out.println("Select a row: ");
+		//		row = s.nextInt();
+		//	} while (row < 0 || row > 2);
 
 			//select a col
-			do {
-				System.out.println("Select a column: ");
-				col = s.nextInt();
-			} while (col < 0 || col > 2);
+		//	do {
+		//		System.out.println("Select a column: ");
+		//		col = s.nextInt();
+		//	} while (col < 0 || col > 2);
 
-		} while (!checkSpace(USER, row, col));
+	//	}
+	while (!checkSpace(USER, row, col));
 
 		//place the token
 		placeToken(USER, row, col);
 	}
 
 	//make the AI's move
-	public void computerTurn() {
-	
+	public boolean computerTurn() {
+		if (spacesOccupied == 9)
+			return true;
+
 		String victory = checkWin();
 		String block = checkBlock();
 
@@ -187,13 +194,18 @@ public class Tic_Tac_Toe {
 		if (victory != null) {
 			int row = Character.getNumericValue(victory.charAt(0));
 			int col = Character.getNumericValue(victory.charAt(1));
+
 			placeToken(AI, row, col);
+			AiRow = row;
+			AiCol = col;
 		}
 
 		//if you need to block, block
 		else if (block != null) {
 			int row = Character.getNumericValue(block.charAt(0));
 			int col = Character.getNumericValue(block.charAt(1));
+			AiRow = row;
+			AiCol = col;
 			placeToken(AI, row, col);
 		}
 
@@ -253,7 +265,10 @@ public class Tic_Tac_Toe {
 
 			//make the move
 			placeToken(AI, row, col);
+			AiRow = row;
+			AiCol = col;
 		}
+		return false;
 	}
 
 	//check to see if player is aout to win, returns a concatenation of the row and column where the block needs to occur
@@ -491,9 +506,7 @@ public class Tic_Tac_Toe {
 	public boolean gameOver() {
 
 		//see if board is full
-		if (spacesOccupied == 9) {
-			return true;
-		}
+	//printBoard();
 
 		//see if someone won on the first row
 		if ((board[0][0] == board[0][1]) && (board[0][0] == board[0][2]) && (board[0][0] != OPEN)) {
@@ -535,11 +548,12 @@ public class Tic_Tac_Toe {
 			return true;
 		}
 
+		//if (spacesOccupied == 9) {
+		//	return true;
+		//}
+
 		return false;
 	}
 
-	public static void main(String[] args) {
-		Tic_Tac_Toe t = new Tic_Tac_Toe();
-		t.playGame();
-	}
+
 }

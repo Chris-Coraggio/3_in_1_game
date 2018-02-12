@@ -1,4 +1,4 @@
-/**
+package app.a3_in_1_game; /**
  * Created by ritzbitz on 2/9/18.
  */
 
@@ -11,7 +11,7 @@
 
 import java.util.HashMap;
 import java.util.Scanner;
-import java.awt.color.*;
+//import java.awt.color.*;
 /**
  * Created by Ritz Bitz on 5/3/2016.
  */
