@@ -10,7 +10,9 @@
 // TODO: Use 2D array to store the board
 
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Scanner;
+import java.awt.color.*;
 
 public class Connect_4 {
 
@@ -24,8 +26,6 @@ public class Connect_4 {
     private static final char CIRCLE = 'O';
     private static final char EMPTY = ' ';
 
-
-
     /**
      * creates gameBoard
      */
@@ -33,9 +33,15 @@ public class Connect_4 {
         count = 0;
         gameBoard = new char[6][7];
         moves = new HashMap<String, Integer>();
+        System.out.println("gameBoard.length: " + gameBoard.length);
+        System.out.println("gameBoard[0].length: " + gameBoard[0].length);
         for (int i = 0; i < gameBoard.length; i++) {
             for (int j = 0; j < gameBoard[0].length; j++) {
-                gameBoard[i][j] = EMPTY;
+                if (i == 0 && j == 1) {
+                    gameBoard[i][j] = CROSS;
+                } else {
+                    gameBoard[i][j] = EMPTY;
+                }
             }
         }
     }
@@ -113,6 +119,61 @@ public class Connect_4 {
     }
 
     /**
+     * Method checks to see if there is someone that has 3 in a row
+     * @param currentPlayer
+     * @return
+     */
+    public int check3Winner(char currentPlayer) {
+        //checks vertical
+        for (int j = 0; j < gameBoard[0].length; j++) {
+            for (int i = gameBoard.length - 1; i > 3; i--) {
+                if (gameBoard[i][j]== currentPlayer && gameBoard[i - 1][j] == currentPlayer
+                        && gameBoard[i - 2][j] == currentPlayer && gameBoard[i - 3][j] == EMPTY) {
+                    System.out.println("checking vert");
+                    return j;
+                }
+            }
+        }
+
+        //checks diagonally
+        for (int i = gameBoard.length - 1; i > 2; i--) {
+            for (int j = 0; j < gameBoard[0].length - 3; j++) {
+                if (gameBoard[i][j] == currentPlayer && gameBoard[i - 1][j + 1] == currentPlayer
+                        && gameBoard[i - 2][j + 2] == currentPlayer && gameBoard[i - 3][j + 3] == EMPTY) {
+                    return j + 3;
+                }
+            }
+        }
+
+        //check diagonally inversely
+        for (int i = 0; i < 3; i++) {
+            for (int j = gameBoard[0].length - 1; j > 2; j--) {
+                if (gameBoard[i][j] == currentPlayer && gameBoard[i - 1][j - 1] == currentPlayer
+                        && gameBoard[i - 2][j - 2] == currentPlayer && gameBoard[i - 3][j - 3] == EMPTY) {
+                    return j - 3;
+                }
+            }
+        }
+
+        //check horizontally row - works
+        for (int i = gameBoard.length - 1; i >= 0; i--) {
+            for (int j = 0; j < gameBoard[0].length - 3; j++) {
+                if (gameBoard[i][j] == currentPlayer && gameBoard[i][j + 1] == currentPlayer
+                        && gameBoard[i][j + 2] == currentPlayer) {
+                    System.out.println("horizontal");
+                    return j + 3;
+                }
+            }
+
+            if (gameBoard[i][gameBoard[0].length - 1] == currentPlayer && gameBoard[i][gameBoard[0].length - 2] == currentPlayer
+                    && gameBoard[i][gameBoard[0].length - 3] == currentPlayer)
+                return gameBoard[0].length - 4;
+        }
+
+        return -1;
+    }
+
+    /**
      * adds the players moves onto the gameboard
      * @return
      */
@@ -130,6 +191,44 @@ public class Connect_4 {
                 return true;
             }
         }
+        return false;
+    }
+
+    public boolean randomMove(char currentPlayer) {
+        Random rand = new Random();
+        boolean worked = false;
+
+        if (anyMovesPossible()) {
+            do {
+                int n = rand.nextInt(6) + 0;
+                System.out.println("random number: " + n + "\n");
+                worked = playerMove(n, currentPlayer);
+            } while (!worked);
+        }
+
+        return false;
+    }
+
+    /**
+     *
+     */
+    public boolean AImove(char currentPlayer) {
+        System.out.println("AI playing");
+        int possible3Win = check3Winner(CROSS);
+
+        if (possible3Win != -1) {
+            playerMove(possible3Win, currentPlayer);
+            System.out.println("inside if");
+            return true;
+        }
+
+        if (randomMove(currentPlayer))
+            return true;
+
+        //playerMove(0, currentPlayer);
+
+
+
         return false;
     }
 
@@ -233,60 +332,146 @@ public class Connect_4 {
     public void play() {
         char currentPlayer = CROSS;
         Scanner input = new Scanner(System.in);
+        boolean validAI = false;
 
+        //determine if you're using AI or not
         do {
-            if (checkWinner(currentPlayer)) {
-                System.out.println(currentPlayer + " is the winner!");
-                return;
+            System.out.println("Do you want to play single player? (yes/no)");
+            String str1 = input.nextLine();
+
+            if (str1.equals("yes")) {
+                validAI = true;
             }
+        } while (!validAI);
 
-            if (!anyMovesPossible()) {
-                System.out.println("The game is a Tie!");
-                return;
-            }
+        if (validAI) {
+            // AI is playing
+            System.out.println("AI is playing");
 
-            printBoard();
-
-            boolean valid = true;
             do {
-                System.out.printf("Player: " + currentPlayer + "\nWhere do you want to place your move?");
-                try {
-                    String str = input.nextLine(); //gets input from the user
-                    str = str.toLowerCase();
+                if (checkWinner(currentPlayer)) {
+                    System.out.println(currentPlayer + " is the winner!");
+                    return;
+                }
 
-                    if (str.equals("undo")) {
-                        undo();
-                        printBoard();
+                if (!anyMovesPossible()) {
+                    System.out.println("The game is a Tie!");
+                    return;
+                }
+
+                printBoard();
+
+                boolean valid = true;
+
+                do {
+                    if (currentPlayer == CROSS) {
+                        System.out.printf("Player: " + currentPlayer + "\nWhere do you want to place your move?\n");
+                        try {
+                            String str = input.nextLine(); //gets input from the user
+                            str = str.toLowerCase();
+
+                            if (str.equals("undo")) {
+                                undo();
+                                printBoard();
+                            } else {
+                                int moveLocation = Integer.parseInt(str);
+
+                                if (moveLocation > 0 && moveLocation <= 7) { //checks to see if number value is valid
+                                    if (anyMovesPossible(moveLocation - 1)) { //checks if moves are possible in the row
+
+                                        playerMove(moveLocation - 1, currentPlayer); //makes the move
+                                        moves.put("" + count, moveLocation - 1);
+                                        count++;
+
+                                        if (checkWinner(currentPlayer)) //checks if the move caused player to win
+                                            break; //breaks if player won
+
+                                        if (currentPlayer == CROSS)  //changes currentPlayer.
+                                            currentPlayer = CIRCLE;
+                                        else
+                                            currentPlayer = CROSS;
+
+                                        valid = false;
+                                    }
+                                }
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Not a number. Try Again");
+                        }
                     } else {
-                        int moveLocation = Integer.parseInt(str);
+                        AImove(currentPlayer);
 
-                        if (moveLocation > 0 && moveLocation <= 7) { //checks to see if number value is valid
-                            if (anyMovesPossible(moveLocation - 1)) { //checks if moves are possible in the row
+                        if (checkWinner(currentPlayer)) //checks if the move caused player to win
+                            break; //breaks if player won
 
-                                playerMove(moveLocation - 1, currentPlayer); //makes the move
-                                moves.put("" + count, moveLocation - 1);
-                                count++;
+                        if (currentPlayer == CROSS)  //changes currentPlayer.
+                            currentPlayer = CIRCLE;
+                        else
+                            currentPlayer = CROSS;
 
-                                if (checkWinner(currentPlayer)) //checks if the move caused player to win
-                                    break; //breaks if player won
+                        valid = false;
+                    }
+                    //checks if any moves are possible in the location specified
 
-                                if (currentPlayer == CROSS)  //changes currentPlayer.
-                                    currentPlayer = CIRCLE;
-                                else
-                                    currentPlayer = CROSS;
+                } while (valid);
+            } while (!checkWinner(currentPlayer));
 
-                                valid = false;
+        } else {
+
+            do {
+                if (checkWinner(currentPlayer)) {
+                    System.out.println(currentPlayer + " is the winner!");
+                    return;
+                }
+
+                if (!anyMovesPossible()) {
+                    System.out.println("The game is a Tie!");
+                    return;
+                }
+
+                printBoard();
+
+                boolean valid = true;
+
+                do {
+                    System.out.printf("Player: " + currentPlayer + "\nWhere do you want to place your move?");
+                    try {
+                        String str = input.nextLine(); //gets input from the user
+                        str = str.toLowerCase();
+
+                        if (str.equals("undo")) {
+                            undo();
+                            printBoard();
+                        } else {
+                            int moveLocation = Integer.parseInt(str);
+
+                            if (moveLocation > 0 && moveLocation <= 7) { //checks to see if number value is valid
+                                if (anyMovesPossible(moveLocation - 1)) { //checks if moves are possible in the row
+
+                                    playerMove(moveLocation - 1, currentPlayer); //makes the move
+                                    moves.put("" + count, moveLocation - 1);
+                                    count++;
+
+                                    if (checkWinner(currentPlayer)) //checks if the move caused player to win
+                                        break; //breaks if player won
+
+                                    if (currentPlayer == CROSS)  //changes currentPlayer.
+                                        currentPlayer = CIRCLE;
+                                    else
+                                        currentPlayer = CROSS;
+
+                                    valid = false;
+                                }
                             }
                         }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Not a number. Try Again");
                     }
-                } catch (NumberFormatException e) {
-                    System.out.println("Not a number. Try Again");
-                }
-                //checks if any moves are possible in the location specified
+                    //checks if any moves are possible in the location specified
 
-            } while (valid);
-        } while (!checkWinner(currentPlayer));
-
+                } while (valid);
+            } while (!checkWinner(currentPlayer));
+        }
         printBoard();
     }
 
