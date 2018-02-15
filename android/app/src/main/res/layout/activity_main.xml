@@ -7,7 +7,7 @@
     tools:context="app.a3_in_1_game.MainActivity">
 
     <Button
-        android:text="Button"
+        android:text="Tic Tac Toe"
         android:layout_width="93dp"
         android:layout_height="62dp"
         tools:layout_editor_absoluteY="340dp"

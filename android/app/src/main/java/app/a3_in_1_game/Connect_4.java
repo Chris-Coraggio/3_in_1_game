@@ -1,4 +1,4 @@
-/**
+package app.a3_in_1_game; /**
  * Created by ritzbitz on 2/9/18.
  */
 
@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
 import java.awt.color.*;
+
 
 public class Connect_4 {
 
