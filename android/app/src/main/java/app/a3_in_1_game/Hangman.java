@@ -11,12 +11,16 @@ package app.a3_in_1_game;
 // TODO: Use character array to store the word
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Hangman {
 
+    //TODO guessing the same letter is fine
+    //TODO check to see if word is already complete before prompting
+
     private static int MAX_WORD_SIZE = 30; //how big (including spaces) the word or phrase to guess can be
-    private static String TEXT_FILE = "";
+    private static String TEXT_FILE =  "C:/Users/cccpo/Desktop/3_in_1_game/android/app/src/main/java/app/a3_in_1_game/HangmanWordList.txt";
 
     public static char[] word = new char[MAX_WORD_SIZE];			//stores the word to be guessed (all uppercase)
     public static boolean[] guessed = new boolean[MAX_WORD_SIZE];	//stores the status of each character in the word (true: has been guessed)
@@ -24,10 +28,22 @@ public class Hangman {
     public static char[] lettersWrong = new char[26];				//stores all letters that the user has guessed that haven't shown up in the word (all uppercase)
     public static int numWrongWordGuesses = 0;                     //number of word guesses made
 
+    public static void init(){
+        //run this at the start of each game
+        word = new char[MAX_WORD_SIZE];
+        guessed = new boolean[MAX_WORD_SIZE];
+        lettersGuessed = new char[26];
+        lettersWrong = new char[26];
+        numWrongWordGuesses = 0;
+        getRandomWord();
+    }
+
     public static boolean inLettersGuessed(char c){
         //returns whether or not c is in the lettersGuessed array
         //true: c is in the array
         //false: c is not in the array
+
+        c = Character.toUpperCase(c);
 
         for(char ch: lettersGuessed){
             if(ch == c){
@@ -57,7 +73,25 @@ public class Hangman {
             System.out.println("IOException: Error reading the file");
         }
 
-        rand.nextInt(numLinesInFile);
+        //start the buffer back out at the top of the file
+        try {
+            fileReader = new FileReader(TEXT_FILE);
+            bufferedReader = new BufferedReader(fileReader);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        //extracts a random line as the word
+        int randomLine = rand.nextInt(numLinesInFile);
+        String trmp = "";
+        for(int i = 0; i < randomLine; i++){
+            try {
+                trmp = bufferedReader.readLine();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+        word = trmp.toCharArray();
         }catch(FileNotFoundException e){
             System.out.println("Can't find the hangman word file.");
         }
@@ -69,7 +103,7 @@ public class Hangman {
 		*/
         int i;
         for(i = 0; i < lettersGuessed.length; i++){
-            if(word[i] == '\u0000'){
+            if(lettersGuessed[i] == '\u0000'){
                 break;
             }
         }
@@ -86,7 +120,7 @@ public class Hangman {
 		*/
         int i;
         for(i = 0; i < lettersWrong.length; i++){
-            if(word[i] == '\u0000'){
+            if(lettersWrong[i] == '\u0000'){
                 break;
             }
         }
@@ -129,7 +163,11 @@ public class Hangman {
                 addToLettersWrong(c);
                 return false;
             }else if (n > 0){
-                System.out.println("Nice job, keep going!");
+                if(wordIsComplete()){
+                    guessWord(new String(word));
+                }else{
+                  System.out.println("Nice job, keep going!");
+                }
                 return true;
             }
         }
@@ -138,7 +176,15 @@ public class Hangman {
     }
 
     public static boolean guessWord(String s){
-        if(s.equals(word)){
+        //TODO handle a word longer than solution
+        char [] guessString = s.toCharArray();
+        boolean match = true;
+        for(int i = 0; i < word.length; i++){
+            if(guessString[i] != word[i]){
+                match = false;
+            }
+        }
+        if(match){
             System.out.println("Congrats! You got it");
             return true;
         }else{
@@ -162,13 +208,49 @@ public class Hangman {
         return numLettersWrong + numWrongWordGuesses;
     }
 
+    public static void printWord(){
+        int index = 0;
+        for(char c: word){
+            if(guessed[index++]){
+                System.out.print("" + c + " ");
+            }else{
+                System.out.print("_ ");
+            }
+        }
+        System.out.println();
+    }
+
+    public static void printNumAppendages(){
+        System.out.println(getNumAppendages() + " wrong guesses!");
+    }
+
+    public static boolean wordIsComplete(){
+        //check along the guessed array
+        //if there's a false value in the word, the word is not complete
+        //System.out.println(Arrays.toString(guessed));
+        int count = 0;
+        for(boolean b: guessed){
+            if(!b){
+                return false;
+            }
+            if(++count == word.length){
+                break;
+            }
+        }
+        return true;
+    }
+
+
     public static void main(String [] args){
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         char c = ' ';
+        init();
+        System.out.println(word);
         while(true){
-            System.out.println("Enter a letter (1 to quit, 2 to solve): ");
+            System.out.println("Enter a letter (1 to quit, 2 to solve, 3 to play again): ");
             try {
                 c = (char)br.read();
+                br.readLine();
             }catch(IOException e){
                 e.printStackTrace();
             }
@@ -187,11 +269,15 @@ public class Hangman {
                     }catch(IOException e){
                         e.printStackTrace();
                     }
+                }else if(c == '3'){
+                    init();
                 }else{
                     System.out.println("Invalid input! Try a letter");
                 }
             }else{
                 guessLetter(c);
+                printWord();
+                printNumAppendages();
             }
         }
     }
