@@ -12,8 +12,6 @@ package app.a3_in_1_game; /**
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
-import java.awt.color.*;
-
 
 public class Connect_4 {
 
