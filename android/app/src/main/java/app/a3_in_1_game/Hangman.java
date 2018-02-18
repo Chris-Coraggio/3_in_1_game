@@ -19,7 +19,7 @@ public class Hangman {
     //TODO guessing the same letter is fine
     //TODO check to see if word is already complete before prompting
 
-    private static int MAX_WORD_SIZE = 30; //how big (including spaces) the word or phrase to guess can be
+    public static int MAX_WORD_SIZE = 30; //how big (including spaces) the word or phrase to guess can be
     private static String TEXT_FILE =  "C:/Users/cccpo/Desktop/3_in_1_game/android/app/src/main/java/app/a3_in_1_game/HangmanWordList.txt";
 
     public static char[] word = new char[MAX_WORD_SIZE];			//stores the word to be guessed (all uppercase)
