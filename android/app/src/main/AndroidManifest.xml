@@ -16,7 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Tic_Tac_Toe_Activity"></activity>
+        <activity android:name=".Tic_Tac_Toe_Activity" />
+        <activity android:name=".Connect_4_Acitivity"></activity>
     </application>
 
 </manifest>

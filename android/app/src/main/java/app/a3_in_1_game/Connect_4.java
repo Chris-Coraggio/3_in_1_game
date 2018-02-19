@@ -1,3 +1,4 @@
+package app.a3_in_1_game;
 /**
  * Created by ritzbitz on 2/9/18.
  */
@@ -21,16 +22,22 @@ public class Connect_4 {
     HashMap<String, Integer> moves;
 
     //variable constants
-    private static final char CROSS = 'X';
-    private static final char CIRCLE = 'O';
-    private static final char EMPTY = ' ';
+    protected final char CROSS = 'X';
+    protected final char CIRCLE = 'O';
+    private final char EMPTY = ' ';
+
+    protected final int NUM_ROWS = 6;
+    protected final int NUM_COLS = 7;
+
+    protected int lastRow = -1;
+    protected int lastCol = -1;
 
     /**
      * creates gameBoard
      */
     public Connect_4() {
         count = 0;
-        gameBoard = new char[6][7];
+        gameBoard = new char[NUM_ROWS][NUM_COLS];
         moves = new HashMap<String, Integer>();
         System.out.println("gameBoard.length: " + gameBoard.length);
         System.out.println("gameBoard[0].length: " + gameBoard[0].length);
@@ -51,7 +58,7 @@ public class Connect_4 {
     }
 
     public char[][] getGameBoard() {
-        char[][] arr = new char[6][7];
+        char[][] arr = new char[NUM_ROWS][NUM_COLS];
 
         for (int i = 0; i < gameBoard.length; i++) {
             for (int j = 0; j < gameBoard[0].length; j++) {
@@ -177,12 +184,15 @@ public class Connect_4 {
         if (player != CROSS && player != CIRCLE)
             return false;
 
-        if (location < 0 || location > 6)
+        if (location < 0 || location > NUM_ROWS)
             return false;
 
         for (int i = gameBoard.length - 1; i >= 0; i--) {
             if (gameBoard[i][location] == EMPTY) {
                 gameBoard[i][location] = player;
+                lastCol = location;
+                lastRow = i;
+
                 return true;
             }
         }
@@ -191,11 +201,11 @@ public class Connect_4 {
 
     public boolean randomMove(char currentPlayer) {
         Random rand = new Random();
-        boolean worked = false;
+        boolean worked;
 
         if (anyMovesPossible()) {
             do {
-                int n = rand.nextInt(14);
+                int n = rand.nextInt(NUM_COLS);
                 System.out.println("random number: " + n + "\n");
                 worked = playerMove(n, currentPlayer);
             } while (!worked);
@@ -233,7 +243,7 @@ public class Connect_4 {
      * @return true if the board is complete.
      */
     public boolean undo() {
-        gameBoard = new char[6][7];
+        gameBoard = new char[NUM_ROWS][NUM_COLS];
         char player = CROSS;
 
         for (int i = 0; i < gameBoard.length; i++) {        //for loop initializes the array with EMPTY char's
@@ -371,7 +381,7 @@ public class Connect_4 {
                             } else {
                                 int moveLocation = Integer.parseInt(str);
 
-                                if (moveLocation > 0 && moveLocation <= 7) { //checks to see if number value is valid
+                                if (moveLocation > 0 && moveLocation <= NUM_COLS) { //checks to see if number value is valid
                                     if (anyMovesPossible(moveLocation - 1)) { //checks if moves are possible in the row
 
                                         playerMove(moveLocation - 1, currentPlayer); //makes the move
@@ -440,7 +450,7 @@ public class Connect_4 {
                         } else {
                             int moveLocation = Integer.parseInt(str);
 
-                            if (moveLocation > 0 && moveLocation <= 7) { //checks to see if number value is valid
+                            if (moveLocation > 0 && moveLocation <= NUM_COLS) { //checks to see if number value is valid
                                 if (anyMovesPossible(moveLocation - 1)) { //checks if moves are possible in the row
 
                                     playerMove(moveLocation - 1, currentPlayer); //makes the move

@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="app.a3_in_1_game.MainActivity">
 
     <Button
-        android:text="Tic Tac Toe"
+        android:id="@+id/buttonTicTacToe"
         android:layout_width="93dp"
         android:layout_height="62dp"
-        tools:layout_editor_absoluteY="340dp"
-        tools:layout_editor_absoluteX="112dp"
-        android:id="@+id/buttonTicTacToe" />
+        android:text="Tic Tac Toe"
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="258dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="155dp" />
 
-</android.support.constraint.ConstraintLayout>
+    <Button
+        android:id="@+id/connect_4_launch"
+        android:layout_width="93dp"
+        android:layout_height="62dp"
+        android:layout_below="@+id/buttonTicTacToe"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="41dp"
+        android:text="Connect 4"
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="258dp" />
+
+</android.widget.RelativeLayout>
