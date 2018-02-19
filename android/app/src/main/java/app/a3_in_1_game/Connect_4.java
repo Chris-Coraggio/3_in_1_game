@@ -1,4 +1,4 @@
-package app.a3_in_1_game; /**
+/**
  * Created by ritzbitz on 2/9/18.
  */
 
@@ -13,8 +13,9 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
 import java.awt.color.*;
-
-
+/**
+ * Created by Ritz Bitz on 5/3/2016.
+ */
 public class Connect_4 {
 
     //instance variables
@@ -38,11 +39,7 @@ public class Connect_4 {
         System.out.println("gameBoard[0].length: " + gameBoard[0].length);
         for (int i = 0; i < gameBoard.length; i++) {
             for (int j = 0; j < gameBoard[0].length; j++) {
-                if (i == 0 && j == 1) {
-                    gameBoard[i][j] = CROSS;
-                } else {
-                    gameBoard[i][j] = EMPTY;
-                }
+                gameBoard[i][j] = EMPTY;
             }
         }
     }
@@ -149,9 +146,9 @@ public class Connect_4 {
         //check diagonally inversely
         for (int i = 0; i < 3; i++) {
             for (int j = gameBoard[0].length - 1; j > 2; j--) {
-                if (gameBoard[i][j] == currentPlayer && gameBoard[i - 1][j - 1] == currentPlayer
-                        && gameBoard[i - 2][j - 2] == currentPlayer && gameBoard[i - 3][j - 3] == EMPTY) {
-                    return j - 3;
+                if (gameBoard[i][j] == currentPlayer && gameBoard[i + 1][j + 1] == currentPlayer
+                        && gameBoard[i + 2][j + 2] == currentPlayer && gameBoard[i + 3][j + 3] == EMPTY) {
+                    return j + 3;
                 }
             }
         }
@@ -160,14 +157,14 @@ public class Connect_4 {
         for (int i = gameBoard.length - 1; i >= 0; i--) {
             for (int j = 0; j < gameBoard[0].length - 3; j++) {
                 if (gameBoard[i][j] == currentPlayer && gameBoard[i][j + 1] == currentPlayer
-                        && gameBoard[i][j + 2] == currentPlayer) {
+                        && gameBoard[i][j + 2] == currentPlayer && gameBoard[i][j + 3] == EMPTY) {
                     System.out.println("horizontal");
                     return j + 3;
                 }
             }
 
             if (gameBoard[i][gameBoard[0].length - 1] == currentPlayer && gameBoard[i][gameBoard[0].length - 2] == currentPlayer
-                    && gameBoard[i][gameBoard[0].length - 3] == currentPlayer)
+                    && gameBoard[i][gameBoard[0].length - 3] == currentPlayer && gameBoard[i][gameBoard[0].length - 4] == EMPTY)
                 return gameBoard[0].length - 4;
         }
 
@@ -183,7 +180,7 @@ public class Connect_4 {
         if (player != CROSS && player != CIRCLE)
             return false;
 
-        if (location < 0 || location > 7)
+        if (location < 0 || location > 6)
             return false;
 
         for (int i = gameBoard.length - 1; i >= 0; i--) {
@@ -201,7 +198,7 @@ public class Connect_4 {
 
         if (anyMovesPossible()) {
             do {
-                int n = rand.nextInt(6) + 0;
+                int n = rand.nextInt(14);
                 System.out.println("random number: " + n + "\n");
                 worked = playerMove(n, currentPlayer);
             } while (!worked);
@@ -219,7 +216,7 @@ public class Connect_4 {
 
         if (possible3Win != -1) {
             playerMove(possible3Win, currentPlayer);
-            System.out.println("inside if");
+            System.out.println("inside if: "  + possible3Win);
             return true;
         }
 
