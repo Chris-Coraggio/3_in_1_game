@@ -30,6 +30,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        Button hangman_launch = (Button) findViewById(R.id.hangman_launch);
+        hangman_launch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), Hangman_Activity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

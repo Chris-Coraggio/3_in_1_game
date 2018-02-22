@@ -7,7 +7,7 @@
 
     <Button
         android:id="@+id/buttonTicTacToe"
-        android:layout_width="93dp"
+        android:layout_width="100dp"
         android:layout_height="62dp"
         android:text="Tic Tac Toe"
         tools:layout_editor_absoluteX="134dp"
@@ -18,7 +18,7 @@
 
     <Button
         android:id="@+id/connect_4_launch"
-        android:layout_width="93dp"
+        android:layout_width="100dp"
         android:layout_height="62dp"
         android:layout_below="@+id/buttonTicTacToe"
         android:layout_centerHorizontal="true"
@@ -27,4 +27,13 @@
         tools:layout_editor_absoluteX="134dp"
         tools:layout_editor_absoluteY="258dp" />
 
+
+    <Button
+        android:text="Hangman"
+        android:layout_width="100dp"
+        android:layout_height="62dp"
+        android:layout_marginTop="41dp"
+        android:id="@+id/hangman_launch"
+        android:layout_below="@+id/connect_4_launch"
+        android:layout_alignStart="@+id/connect_4_launch" />
 </android.widget.RelativeLayout>
