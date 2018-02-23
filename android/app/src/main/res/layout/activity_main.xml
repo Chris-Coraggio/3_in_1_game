@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="app.a3_in_1_game.MainActivity">
@@ -23,35 +24,50 @@
 
     <Button
         android:id="@+id/buttonTicTacToe"
-        android:layout_width="100dp"
-        android:layout_height="62dp"
+        android:layout_width="200dp"
+        android:layout_height="30dp"
         android:text="Tic Tac Toe"
         tools:layout_editor_absoluteX="134dp"
         tools:layout_editor_absoluteY="300dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="190dp" />
+        android:layout_marginTop="230dp"
+
+        android:textColor="#421E0C"
+        android:textSize="15sp"
+        android:background="@drawable/buttonshape"
+    />
 
     <Button
         android:id="@+id/connect_4_launch"
-        android:layout_width="100dp"
-        android:layout_height="62dp"
+        android:layout_width="200dp"
+        android:layout_height="30dp"
         android:layout_below="@+id/buttonTicTacToe"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="41dp"
         android:text="Connect 4"
         tools:layout_editor_absoluteX="134dp"
-        tools:layout_editor_absoluteY="258dp" />
+        tools:layout_editor_absoluteY="258dp"
+
+        android:textColor="#421E0C"
+        android:textSize="15sp"
+        android:background="@drawable/buttonshape2"
+        />
 
 
     <Button
         android:text="Hangman"
-        android:layout_width="100dp"
-        android:layout_height="62dp"
+        android:layout_width="200dp"
+        android:layout_height="30dp"
         android:layout_marginTop="41dp"
         android:id="@+id/hangman_launch"
         android:layout_below="@+id/connect_4_launch"
-        android:layout_alignStart="@+id/connect_4_launch" />
+        android:layout_alignStart="@+id/connect_4_launch"
+
+        android:textColor="#421E0C"
+        android:textSize="15sp"
+        android:background="@drawable/buttonshape3"
+        />
 
 
 </android.widget.RelativeLayout>
