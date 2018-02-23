@@ -12,8 +12,8 @@
     tools:context="app.a3_in_1_game.Tic_Tac_Toe_Activity">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp">
-
+        android:layout_height="50dp"
+>
 
         <TextView
             android:text="Score: 0"
@@ -34,28 +34,39 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#3e3d31"
+
         android:layout_weight="1">
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:id="@+id/button1" />
+            android:textSize="110sp"
+            android:backgroundTint="#faf03f"
+            android:id="@+id/button1"
+            android:elevation="0dp" />
 
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textSize="110sp"
+            android:backgroundTint="#faf03f"
             android:id="@+id/button2" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textSize="110sp"
+            android:backgroundTint="#faf03f"
             android:id="@+id/button3" />
 
     </LinearLayout>
 
     <LinearLayout
+        android:background="#3e3d31"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1">
@@ -63,20 +74,28 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textSize="110sp"
+            android:backgroundTint="#faf03f"
             android:id="@+id/button4" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textSize="110sp"
+            android:backgroundTint="#faf03f"
             android:id="@+id/button5" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textSize="110sp"
+            android:backgroundTint="#faf03f"
             android:id="@+id/button6" />
     </LinearLayout>
 
     <LinearLayout
+        android:background="#3e3d31"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1">
@@ -84,16 +103,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textSize="110sp"
+            android:backgroundTint="#faf03f"
             android:id="@+id/button7" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textSize="110sp"
+            android:backgroundTint="#faf03f"
             android:id="@+id/button8" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textSize="110sp"
+            android:backgroundTint="#faf03f"
             android:id="@+id/button9" />
     </LinearLayout>
 

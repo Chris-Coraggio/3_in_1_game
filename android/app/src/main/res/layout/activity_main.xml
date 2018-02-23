@@ -4,6 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="app.a3_in_1_game.MainActivity">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:layout_centerInParent="true"
+        android:src="@drawable/background_main" />
+    <TextView
+        android:text="3 in 1 Game"
+        android:textSize="50sp"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="96dp"
+        android:id="@+id/title"
+        android:layout_centerHorizontal="true"
+        />
 
     <Button
         android:id="@+id/buttonTicTacToe"
@@ -11,10 +27,10 @@
         android:layout_height="62dp"
         android:text="Tic Tac Toe"
         tools:layout_editor_absoluteX="134dp"
-        tools:layout_editor_absoluteY="258dp"
+        tools:layout_editor_absoluteY="300dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="155dp" />
+        android:layout_marginTop="190dp" />
 
     <Button
         android:id="@+id/connect_4_launch"
@@ -36,4 +52,6 @@
         android:id="@+id/hangman_launch"
         android:layout_below="@+id/connect_4_launch"
         android:layout_alignStart="@+id/connect_4_launch" />
+
+
 </android.widget.RelativeLayout>
