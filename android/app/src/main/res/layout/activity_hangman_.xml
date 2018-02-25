@@ -2,12 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:background="#FF000000"
+    android:background="#e1da04"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
+
+    <TextView
+        android:text="Score: 0"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:id="@+id/hangmanScore"
+        android:layout_weight="1" />
 
     <RelativeLayout
         android:layout_width="fill_parent"

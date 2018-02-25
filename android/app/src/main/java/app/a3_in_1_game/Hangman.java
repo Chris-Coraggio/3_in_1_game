@@ -10,6 +10,8 @@ package app.a3_in_1_game;
 // TODO: Make helper functions
 // TODO: Use character array to store the word
 
+import android.content.res.AssetManager;
+
 import java.io.*;
 import java.util.Arrays;
 import java.util.Random;
@@ -21,7 +23,6 @@ public class Hangman {
 
     private static int MAX_WORD_SIZE = 30; //how big (including spaces) the word or phrase to guess can be
     private static String TEXT_FILE =  "C:/Users/cccpo/Desktop/3_in_1_game/android/app/src/main/java/app/a3_in_1_game/HangmanWordList.txt";
-
     public static char[] word = new char[MAX_WORD_SIZE];			//stores the word to be guessed (all uppercase)
     public static boolean[] guessed = new boolean[MAX_WORD_SIZE];	//stores the status of each character in the word (true: has been guessed)
     public static char[] lettersGuessed = new char[26];			//stores all letters that the user has guessed (all uppercase)
@@ -58,6 +59,7 @@ public class Hangman {
         //populates word with a random word from TEXT_FILE
         Random rand = new Random();
         try {
+
         FileReader fileReader;
             fileReader = new FileReader(TEXT_FILE);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
