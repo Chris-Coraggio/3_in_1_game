@@ -10,7 +10,7 @@ import android.widget.Button;
 public class LetterAdapter extends BaseAdapter {
 	private String[] letters;
 	private LayoutInflater letterInf;
-	
+
 	public LetterAdapter(Context c) {
 		letters=new String[26];
 		for (int a = 0; a < letters.length; a++) {
@@ -23,7 +23,7 @@ public class LetterAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		
+
 		return letters.length;
 	}
 
@@ -52,7 +52,7 @@ public class LetterAdapter extends BaseAdapter {
 		  //set the text to this letter
 		  letterBtn.setText(letters[position]);
 		  return letterBtn;
-		  
+
 	}
 
 }

@@ -42,7 +42,6 @@ public class Hangman_Activity extends AppCompatActivity {
     private LinearLayout wordLayout;
     private TextView[] charViews;
     private GridView letters;
-    // private LetterAdapter ltrAdapt;
     //body part images
     private ImageView[] bodyParts;
     //number of body parts
