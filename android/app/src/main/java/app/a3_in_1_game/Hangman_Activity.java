@@ -31,7 +31,7 @@ import java.io.InputStreamReader;
 import java.util.Random;
 
 import static app.a3_in_1_game.Hangman.getRandomWord;
-import static app.a3_in_1_game.Hangman.word;
+import static app.a3_in_1_game.Hangman.currentWord;
 import static app.a3_in_1_game.Tic_Tac_Toe_Activity.textView;
 
 public class Hangman_Activity extends AppCompatActivity {
@@ -115,8 +115,8 @@ public class Hangman_Activity extends AppCompatActivity {
             }
 
 
-        word = trmp.toCharArray();
-        String text = String.valueOf(word);
+       currentWord = trmp.toCharArray();
+        String text = String.valueOf(currentWord);
         currWord = text.toLowerCase();
         System.out.println(text);
     }
