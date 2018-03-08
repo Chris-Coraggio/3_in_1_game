@@ -17,6 +17,7 @@ public class Connect_4_Acitivity extends AppCompatActivity {
     private Connect_4 connect_4;
     private boolean inProgress = true;
     private int score = 0;
+    private boolean multiplayer = true;
 
     private TextView scoreText;
     private String text;
@@ -38,7 +39,7 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                         int col = getCol(motionEvent.getX());
                         if (col != -1) {
                             drop(col, connect_4.CROSS);
-                            if (inProgress) {
+                            if (inProgress & !multiplayer) {
                                 drop(-1, connect_4.CIRCLE);
                             }
                         }
@@ -84,7 +85,8 @@ public class Connect_4_Acitivity extends AppCompatActivity {
     private void drop(int col, char currentPlayer) {
         if (!inProgress)
             return;
-        if (col == -1) {
+        if (col == -1 && !multiplayer) {
+            // TODO: Create new thread and sleep
             connect_4.AImove(currentPlayer);
             col = connect_4.lastCol;
         } else if (!connect_4.playerMove(col, currentPlayer)) {

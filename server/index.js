@@ -1,15 +1,35 @@
-var mysql = require("mysql")
+//var mysql = require("mysql");
 var express = require("express");
 var app = express();
 var port = process.env.PORT || 8080;
 
-var pool  = mysql.createPool(process.env.JAWSDB_URL);
+//var pool  = mysql.createPool(process.env.JAWSDB_URL);
 
 app.get("/", function (req, res) {
     res.send("Hello World!");
 });
 
-
+app.route("/connect_4/:gameID")
+	.get(function (req, res) {
+		res.sent(req)
+	})
+	.post(function (req, res) {
+		pool.getConnection(function(error, con) {
+			if (error) throw error;
+			var query = "INSERT INTO qdcise2a2swf0oxi.simpleapp (Operation) VALUES ('Increment');";
+			con.query(query, function (err, result) {
+				con.release();
+				if (!err) {
+					console.log("Incremented");
+					res.send("Incremented");
+				}
+				else {
+					throw err;
+				}
+			});
+		});
+	})
+	
 app.get("/retrieve", function (req, res) {
     pool.getConnection(function(error, con) {
         if (error) throw error;

@@ -7,3 +7,4 @@
 .idea/dictionaries
 .idea/libraries
 /.env
+node_modules
