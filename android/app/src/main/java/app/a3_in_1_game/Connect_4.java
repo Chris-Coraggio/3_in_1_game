@@ -13,7 +13,6 @@ package app.a3_in_1_game;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
-import java.awt.color.*;
 /**
  * Created by Ritz Bitz on 5/3/2016.
  */
