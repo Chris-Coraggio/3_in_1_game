@@ -59,7 +59,7 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                             try {
                                 myTurn = Objects.equals(response.getString("turn"), user);
                                 if (myTurn) {
-                                    setCol = response.getInt("");
+                                    setCol = response.getInt("col");
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();

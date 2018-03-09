@@ -8,6 +8,7 @@
 // TODO: Make sure code is commented and readable
 // TODO: Make helper functions
 // TODO: Use 2D array to store the board
+package app.a3_in_1_game;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -16,6 +17,7 @@ import java.awt.color.*;
 /**
  * Created by Ritz Bitz on 5/3/2016.
  */
+
 public class Connect_4 {
 
     //instance variables
@@ -24,10 +26,15 @@ public class Connect_4 {
     HashMap<String, Integer> moves;
 
     //variable constants
-    private static final char CROSS = 'X';
-    private static final char CIRCLE = 'O';
-    private static final char EMPTY = ' ';
+    protected final char CROSS = 'X';
+    protected final char CIRCLE = 'O';
+    private final char EMPTY = ' ';
 
+    protected final int NUM_ROWS = 6;
+    protected final int NUM_COLS = 7;
+
+    protected int lastRow = -1;
+    protected int lastCol = -1;
     /**
      * creates gameBoard
      */
