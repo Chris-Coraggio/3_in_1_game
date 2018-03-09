@@ -1,7 +1,10 @@
 package app.a3_in_1_game;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +14,76 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Objects;
+
 public class Connect_4_Acitivity extends AppCompatActivity {
+    final String url = "http://10.0.2.2:8080";
+    final Context context = this;
+    RequestQueue requestQueue;
+    int gameID = 1;
+    SharedPreferences sharedPref;
+    String user;
+    boolean myTurn = false;
     private ImageView[][] board;
     private View boardView;
     private Connect_4 connect_4;
     private boolean inProgress = true;
     private int score = 0;
     private boolean multiplayer = true;
-
     private TextView scoreText;
     private String text;
     private Button button;
+    private int setCol = -1;
+
+    protected void update() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    String req = url + "/connect_4/" + gameID + "/" + user;
+                    Log.v("TEST", req);
+                    JsonObjectRequest jsonObjectRequest =
+                            new JsonObjectRequest(Request.Method.GET, req, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show();
+                            try {
+                                myTurn = Objects.equals(response.getString("turn"), user);
+                                if (myTurn) {
+                                    setCol = response.getInt("");
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
+                    if (myTurn) {
+
+                        break;
+                    }
+                }
+            }
+        }).start();
+    }
+
+    protected void post() {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +91,12 @@ public class Connect_4_Acitivity extends AppCompatActivity {
         setContentView(R.layout.activity_connect_4__acitivity);
         connect_4 = new Connect_4();
         boardView = findViewById(R.id.game_board);
+        sharedPref = getSharedPreferences("myPref", Context.MODE_PRIVATE);
+        user = sharedPref.getString("user", "");
+        requestQueue = MySingleton.getInstance(this.getApplicationContext()).getRequestQueue();
         setBoard();
+        update();
+
         boardView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {

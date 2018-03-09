@@ -41,6 +41,7 @@ app.get("/connect_4_join/:gameID/:client", function (req, res) {
 		var game = connect_4_games[gameID];
 		res.send("Game joined!");
 		game.client = client;
+		game.turn = game.host;
 		console.log(game);
 	}
 	else {
@@ -66,14 +67,21 @@ app.route("/connect_4/:gameID(\\d+)/:user")
 		}
 		else {
 			console.log("Error: gameID not found");
-			res.send("Error: gameID not found")
+			res.send("Error: gameID not found");
 		}		
 	})
 	.post(function (req, res) {
 		var gameID = req.params.gameID;
 		if (gameID in connect_4_games) {
-			console.log(connect_4_games[req.params.gameID]);
-			res.json(connect_4_games[req.params.gameID]);
+			var game = connect_4_games[gameID];
+			if (checkPlayer(user, game)) {
+				console.log(connect_4_games[req.params.gameID]);
+				res.json(connect_4_games[req.params.gameID]);
+			}
+			else {
+				console.log("Player not found in game: " + gameID);
+				res.send("Player not found in game: " + gameID);
+			}
 		}
 		else {
 			console.log("Error: gameID not found");
