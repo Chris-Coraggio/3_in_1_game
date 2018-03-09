@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +18,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,63 +26,96 @@ import org.json.JSONObject;
 import java.util.Objects;
 
 public class Connect_4_Acitivity extends AppCompatActivity {
-    final String url = "http://10.0.2.2:8080";
-    final Context context = this;
+    private static boolean myTurn = false;
+    private final String url = MySingleton.url;
     RequestQueue requestQueue;
-    int gameID = 1;
-    SharedPreferences sharedPref;
-    String user;
-    boolean myTurn = false;
+    private Context context;
+    private String host = MySingleton.connect_4_host;
+    private SharedPreferences sharedPref;
+    private String user;
+    private Thread thread;
     private ImageView[][] board;
     private View boardView;
     private Connect_4 connect_4;
     private boolean inProgress = true;
     private int score = 0;
-    private boolean multiplayer = true;
+    private boolean multiplayer = MySingleton.connect_4_multiplayer;
     private TextView scoreText;
     private String text;
     private Button button;
     private int setCol = -1;
+    private boolean run;
 
     protected void update() {
-        new Thread(new Runnable() {
+        thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
-                    String req = url + "/connect_4/" + gameID + "/" + user;
-                    Log.v("TEST", req);
+                String req = url + "/connect_4/" + host + "/" + user;
+                System.err.println(req);
+                while (!myTurn && run) {
                     JsonObjectRequest jsonObjectRequest =
                             new JsonObjectRequest(Request.Method.GET, req, null, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show();
-                            try {
-                                myTurn = Objects.equals(response.getString("turn"), user);
-                                if (myTurn) {
-                                    setCol = response.getInt("col");
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    try {
+                                        System.err.println("RESPONSE: " + response.toString());
+                                        myTurn = Objects.equals(response.getString("turn"), user);
+                                        if (myTurn) {
+                                            setCol = response.getInt("col");
+                                            if (setCol != -1) {
+                                                ((Connect_4_Acitivity) context).runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        drop(setCol, connect_4.CIRCLE);
+                                                        setCol = -1;
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                    jsonObjectRequest.setTag(this);
                     MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
-                    if (myTurn) {
-
-                        break;
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
             }
-        }).start();
+        });
+        thread.start();
     }
 
-    protected void post() {
-
+    protected void post(int col) {
+        String req = url + "/connect_4/" + host + "/" + user + "/" + col;
+        System.err.println(req);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, req,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (response.equals("Move successful!")) {
+                            update();
+                        } else {
+                            Toast.makeText(context, "ERROR", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        stringRequest.setTag(this);
+        MySingleton.getInstance(context).addToRequestQueue(stringRequest);
     }
 
     @Override
@@ -91,11 +124,15 @@ public class Connect_4_Acitivity extends AppCompatActivity {
         setContentView(R.layout.activity_connect_4__acitivity);
         connect_4 = new Connect_4();
         boardView = findViewById(R.id.game_board);
+        context = this;
+        run = true;
         sharedPref = getSharedPreferences("myPref", Context.MODE_PRIVATE);
         user = sharedPref.getString("user", "");
         requestQueue = MySingleton.getInstance(this.getApplicationContext()).getRequestQueue();
         setBoard();
-        update();
+        if (multiplayer) {
+            update();
+        }
 
         boardView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -104,9 +141,13 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                     case MotionEvent.ACTION_POINTER_UP:
                     case MotionEvent.ACTION_UP: {
                         int col = getCol(motionEvent.getX());
-                        if (col != -1) {
+                        if (col != -1 && multiplayer && myTurn) {
+                            myTurn = false;
                             drop(col, connect_4.CROSS);
-                            if (inProgress & !multiplayer) {
+                            post(col);
+                        } else if (col != -1 && !multiplayer) {
+                            drop(col, connect_4.CROSS);
+                            if (inProgress && !multiplayer) {
                                 drop(-1, connect_4.CIRCLE);
                             }
                         }
@@ -225,6 +266,15 @@ public class Connect_4_Acitivity extends AppCompatActivity {
             for (int col = 0; col < connect_4.NUM_COLS; col++) {
                 board[row][col].setImageResource(android.R.color.transparent);
             }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (multiplayer) {
+            run = false;
+            thread.interrupt();
         }
     }
 }

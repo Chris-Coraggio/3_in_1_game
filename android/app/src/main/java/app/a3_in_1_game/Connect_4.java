@@ -214,6 +214,8 @@ public class Connect_4 {
         for (int i = gameBoard.length - 1; i >= 0; i--) {
             if (gameBoard[i][location] == EMPTY) {
                 gameBoard[i][location] = player;
+                lastCol = location;
+                lastRow = i;
                 return true;
             }
         }
