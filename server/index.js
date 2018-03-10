@@ -200,6 +200,82 @@ app.post("/tic_tac_toe/:host/:user/:row-:col", function (req, res) {
 	console.log();
 });
 
+//-----------------HANGMAN------------------
+var hangman_games = {}; //stores all hangman games
+						//key: host
+						//value: game object
+
+app.get("/hangman_host/:host", function (req, res) {
+	var host = req.params.host;
+	console.log("New Hangman: " + host);
+	res.send("Game created!");
+	game = {
+		host: host,
+		game.words = getWords()
+		};
+	connect_4_games[host] = game;
+	console.log(connect_4_games);
+});
+
+app.get("/hangman_join/:host/:client", function (req, res) {
+	var host = req.params.host;
+	var client = req.params.client;
+	console.log("Hangman: " + host);
+	console.log("Being joined by " + client);
+	if (host in hangman_games) {	
+		var game = hangman_games[host];
+		res.send("Game joined!");
+		game.client = client;
+		console.log(game);
+	}
+	else {
+		console.log("Error: host not found");
+		res.send("Error: host not found")
+	}
+});
+
+app.post("/hangman_done/:host/:client/:score/:numErrors", function(req, res) {
+	var host = req.params.host;
+	var client = req.params.client;
+	var score = req.params.score;
+	var numErrors = req.params.numErrors;
+
+	//determine winner
+}
+
+//called at the end of the game until there is a winner
+app.get("/hangman/:host/:user", function (req, res) {
+	console.log("GET:");
+	console.log(req.originalUrl);
+	var host = req.params.host;
+	var user = req.params.user;
+	if (host in hangman_games) {
+		var game = hangman_games[host];
+		if (checkPlayer(user, game)) {
+			console.log(hangman_games[host]);
+			res.json(hangman_games[host]);
+		}
+		else {
+			console.log("Player not found in game: " + user);
+			res.send("Player not found in game: " + user);
+		}
+	}
+	else {
+		console.log("Error: host not found");
+		res.send("Error: host not found");
+	}		
+	console.log();
+});
+
+function getWords(){
+	//grab random words
+	var wordsList = ["moist", "monkey"];
+	//randomize word list and grab top 20 or so
+	return wordsList;
+}
+
+
+//-------------END HANGMAN------------------
 app.set("port", port);
 
 app.listen(app.get("port"), function () {
