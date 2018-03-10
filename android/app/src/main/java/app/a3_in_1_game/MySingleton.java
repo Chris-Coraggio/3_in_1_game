@@ -20,6 +20,9 @@ public class MySingleton {
     static String connect_4_host;
     static boolean connect_4_multiplayer;
 
+    static String tic_tac_toe_host;
+    static boolean tic_tac_toe_multiplayer;
+
     private MySingleton(Context context) {
         mCtx = context;
         mRequestQueue = getRequestQueue();
