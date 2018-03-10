@@ -111,6 +111,95 @@ app.post("/connect_4/:host/:user/:col", function (req, res) {
 	console.log();
 });
 
+var tic_tac_toe_games = {};
+
+app.get("/tic_tac_toe_host/:host", function (req, res) {
+	var host = req.params.host;
+	console.log("New Tic Tac Toe: " + host);
+	res.send("Game created!");
+	game = {
+		host: host
+		};
+	tic_tac_toe_games[host] = game;
+	console.log(tic_tac_toe_games);
+});
+
+app.get("/tic_tac_toe_join/:host/:client", function (req, res) {
+	var host = req.params.host;
+	var client = req.params.client;
+	console.log("Tic Tac Toe: " + host);
+	console.log("Being joined by " + client);
+	if (host in tic_tac_toe_games) {	
+		var game = tic_tac_toe_games[host];
+		res.send("Game joined!");
+		game.client = client;
+		game.turn = game.host;
+		game.col = "-1";
+		game.row = "-1";
+		console.log(game);
+	}
+	else {
+		console.log("Error: host not found");
+		res.send("Error: host not found")
+	}
+});
+
+app.get("/tic_tac_toe/:host/:user", function (req, res) {
+	console.log("GET:");
+	console.log(req.originalUrl);
+	var host = req.params.host;
+	var user = req.params.user;
+	if (host in tic_tac_toe_games) {
+		var game = tic_tac_toe_games[host];
+		if (checkPlayer(user, game)) {
+			console.log(tic_tac_toe_games[host]);
+			res.json(tic_tac_toe_games[host]);
+		}
+		else {
+			console.log("Player not found in game: " + user);
+			res.send("Player not found in game: " + user);
+		}
+	}
+	else {
+		console.log("Error: host not found");
+		res.send("Error: host not found");
+	}		
+	console.log();
+});
+
+app.post("/tic_tac_toe/:host/:user/:row-:col", function (req, res) {
+	console.log("POST:");
+	console.log(req.originalUrl);
+	var host = req.params.host;
+	var user = req.params.user;
+	if (host in tic_tac_toe_games) {
+		var game = tic_tac_toe_games[host];
+		if (checkPlayer(user, game)) {
+			if (user == game.turn) {
+				var col = req.params.col;
+				var row = req.params.row;
+				game.col = col;
+				game.row = row;
+				changeTurn(game);
+				console.log(tic_tac_toe_games[host]);
+				res.send("Move successful!");
+			}
+			else {
+				console.log("Not player's turn: " + user)
+			}
+		}
+		else {
+			console.log("Player not found in game: " + user);
+			res.send("Player not found in game: " + user);
+		}
+	}
+	else {
+		console.log("Error: host not found");
+		res.send("Error: host not found");
+	}
+	console.log();
+});
+
 app.set("port", port);
 
 app.listen(app.get("port"), function () {
