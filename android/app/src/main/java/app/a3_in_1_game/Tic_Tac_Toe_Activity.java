@@ -60,7 +60,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                                             setCol = response.getInt("col");
                                             setRow = response.getInt("row");
                                             if (setCol != -1 && setRow != -1) {
-                                                ((Tic_Tac_Toe_Activity) context).runOnUiThread(new Runnable() {
+                                                (Tic_Tac_Toe_Activity.this).runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
                                                         //drop(setCol, connect_4.CIRCLE);
@@ -148,7 +148,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tic_tac_toe);
-        context = this; //this might be incorrect due to how ahad is doing things
+        context = this;
         run = true;
         sharedPref = getSharedPreferences("myPref", Context.MODE_PRIVATE);
         user = sharedPref.getString("user", "");
@@ -169,6 +169,9 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
 
         if (multiplayer) {
             update();
+        }
+        else {
+            myTurn = true;
         }
         // textView.setText("sdf");
 
@@ -671,6 +674,19 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
         score++;
         String message = "score: " + score;
         textView.setText(message);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (multiplayer) {
+            myTurn = false;
+            run = true;
+            update();
+        }
+        else {
+            myTurn = true;
+        }
     }
 
     @Override
