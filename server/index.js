@@ -27,7 +27,21 @@ app.get("/", function (req, res) {
 
 var users = [];
 
-app.get("/set_username/:old-:user", function(req, res) {
+app.get("/set_username/:user", function(req, res) {
+	// Check if new username is unique
+	var user = req.params.user;
+	if (users.indexOf(user) > -1) {
+		console.log("Username not unique");
+		res.send("Username not unique");
+	}
+	else {
+		users.push(user);
+		console.log(users);
+		res.send("Username added!");
+	}
+});
+
+app.get("/set_and_delete_username/:old-:user", function(req, res) {
 	// Delete old username
 	var old = req.params.old;
 	var index = users.indexOf(old);
@@ -44,7 +58,7 @@ app.get("/set_username/:old-:user", function(req, res) {
 	else {
 		users.push(user);
 		console.log(users);
-		res.send("User added!");
+		res.send("Username added!");
 	}
 });
 
