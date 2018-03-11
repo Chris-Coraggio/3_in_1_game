@@ -59,6 +59,9 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                                 public void onResponse(JSONObject response) {
                                     try {
                                         System.err.println("RESPONSE: " + response.toString());
+                                        if (myTurn) {
+                                            return;
+                                        }
                                         myTurn = Objects.equals(response.getString("turn"), user);
                                         if (myTurn) {
                                             setCol = response.getInt("col");
