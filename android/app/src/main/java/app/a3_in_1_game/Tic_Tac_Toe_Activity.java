@@ -35,7 +35,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
     private static boolean myTurn = false;
     private boolean run;
     private String host = MySingleton.tic_tac_toe_host;
-    private boolean multiplayer = MySingleton.tic_tac_toe_multiplayer;
+    public boolean multiplayer = MySingleton.tic_tac_toe_multiplayer;
     private String user;
     private int setCol = -1;
     private int setRow = -1;
@@ -65,7 +65,7 @@ protected void update() {
                                                     @Override
                                                     public void run() {
                                                         //drop(setCol, connect_4.CIRCLE);
-                                                        t.playerTurn(row,col);
+                                                        updateBoard(setRow, setCol);
                                                         setCol = -1;
                                                         setRow = -1;
                                                     }
@@ -96,6 +96,9 @@ protected void update() {
     }
 
     protected void post(int col, int row) {
+        if (!multiplayer) {
+            return;
+        }
         String req = url + "/tic_tac_toe/" + host + "/" + user + "/" + col + "-" + row;
         System.err.println(req);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, req,
@@ -216,9 +219,9 @@ protected void update() {
                     b10.setText("Restart");
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();                }
-                else
-                updateBoard(AiRow, AiCol);
-
+                else if (!multiplayer) {
+                    updateBoard(AiRow, AiCol);
+                }
             }
         });
         b2.setOnClickListener(new View.OnClickListener() {
@@ -305,8 +308,9 @@ protected void update() {
 
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();                }
-                else
+                else if (!multiplayer) {
                     updateBoard(AiRow, AiCol);
+                }
             }
         });
         b4.setOnClickListener(new View.OnClickListener() {
@@ -348,8 +352,9 @@ protected void update() {
 
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();                }
-                else
+                else if (!multiplayer) {
                     updateBoard(AiRow, AiCol);
+                }
             }
         });
 
@@ -392,8 +397,9 @@ protected void update() {
 
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();                }
-                else
+                else if (!multiplayer) {
                     updateBoard(AiRow, AiCol);
+                }
             }
         });
         b6.setOnClickListener(new View.OnClickListener() {
@@ -435,8 +441,9 @@ protected void update() {
 
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();                }
-                else
+                else if (!multiplayer) {
                     updateBoard(AiRow, AiCol);
+                }
             }
         });
         b7.setOnClickListener(new View.OnClickListener() {
@@ -478,8 +485,9 @@ protected void update() {
 
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();                }
-                else
+                else if (!multiplayer) {
                     updateBoard(AiRow, AiCol);
+                }
             }
         });
         b8.setOnClickListener(new View.OnClickListener() {
@@ -524,8 +532,9 @@ protected void update() {
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
                 }
-                else
+                else if (!multiplayer) {
                     updateBoard(AiRow, AiCol);
+                }
 
             }
         });
@@ -565,8 +574,9 @@ protected void update() {
 
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();                }
-                else
+                else if (!multiplayer) {
                     updateBoard(AiRow, AiCol);
+                }
 
             }
         });
@@ -605,15 +615,24 @@ protected void update() {
 
     }
 
-public void updateScore(int player){
-    context = getApplicationContext();
-    CharSequence text = "You win!";
-    int duration = Toast.LENGTH_SHORT;
+    public void updateScore(int player){
+        context = getApplicationContext();
+        CharSequence text = "You win!";
+        int duration = Toast.LENGTH_SHORT;
 
-    Toast toast = Toast.makeText(context, text, duration);
-    toast.show();
-    score++;
-    String message = "score: " + score;
-textView.setText(message);
-}
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+        score++;
+        String message = "score: " + score;
+    textView.setText(message);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (multiplayer) {
+            run = false;
+            thread.interrupt();
+        }
+    }
 }

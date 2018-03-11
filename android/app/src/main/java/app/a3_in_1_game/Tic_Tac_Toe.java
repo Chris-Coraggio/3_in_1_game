@@ -184,6 +184,9 @@ public static int AiRow;
 
 	//make the AI's move
 	public boolean computerTurn() {
+		if (multiplayer) {
+			return;
+		}
 		if (spacesOccupied == 9)
 			return true;
 
