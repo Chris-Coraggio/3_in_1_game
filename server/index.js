@@ -31,6 +31,9 @@ app.get("/connect_4_host/:host", function (req, res) {
 	var host = req.params.host;
 	console.log("New Connect 4: " + host);
 	res.send("Game created!");
+	if (host in connect_4_games) {
+		delete connect_4_games[host];
+	}
 	game = {
 		host: host
 		};
@@ -43,7 +46,7 @@ app.get("/connect_4_join/:host/:client", function (req, res) {
 	var client = req.params.client;
 	console.log("Connect 4: " + host);
 	console.log("Being joined by " + client);
-	if (host in connect_4_games) {	
+	if (host in connect_4_games) {
 		var game = connect_4_games[host];
 		res.send("Game joined!");
 		game.client = client;
@@ -117,6 +120,9 @@ app.get("/tic_tac_toe_host/:host", function (req, res) {
 	var host = req.params.host;
 	console.log("New Tic Tac Toe: " + host);
 	res.send("Game created!");
+	if (host in tic_tac_toe_games) {
+		delete tic_tac_toe_games[host];
+	}
 	game = {
 		host: host
 		};
@@ -209,6 +215,9 @@ app.get("/hangman_host/:host", function (req, res) {
 	var host = req.params.host;
 	console.log("New Hangman: " + host);
 	res.send("Game created!");
+	if (host in hangman_games) {
+		delete hangman_games[host];
+	}
 	game = {
 		host: host,
 		words: getWords()

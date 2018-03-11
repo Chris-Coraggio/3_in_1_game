@@ -65,6 +65,28 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                                                     public void run() {
                                                         //drop(setCol, connect_4.CIRCLE);
                                                         updateBoard(setRow, setCol);
+                                                        t.spacesOccupied++;
+                                                        if (t.gameOver() == true) {
+                                                            context = getApplicationContext();
+                                                            CharSequence text = "You Lose! Score Decreased!";
+                                                            int duration = Toast.LENGTH_SHORT;
+                                                            score--;
+                                                            String message = "score: " + score;
+                                                            textView.setText(message);
+                                                            Toast toast = Toast.makeText(context, text, duration);
+                                                            toast.show();
+                                                            b10.setText("Restart");
+                                                            score++;
+                                                        }
+                                                        if (t.spacesOccupied == 9) {
+                                                            context = getApplicationContext();
+                                                            CharSequence text = "Its a Tie!";
+                                                            int duration = Toast.LENGTH_SHORT;
+                                                            score++;
+                                                            b10.setText("Restart");
+                                                            Toast toast = Toast.makeText(context, text, duration);
+                                                            toast.show();
+                                                        }
                                                         setCol = -1;
                                                         setRow = -1;
                                                     }
@@ -94,7 +116,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
         thread.start();
     }
 
-    protected void post(int col, int row) {
+    protected void post(int row, int col) {
         if (!multiplayer) {
             return;
         }
