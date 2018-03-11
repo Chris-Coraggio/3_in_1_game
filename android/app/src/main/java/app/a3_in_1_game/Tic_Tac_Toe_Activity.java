@@ -30,11 +30,11 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
     private static boolean myTurn = false;
     final Tic_Tac_Toe t = new Tic_Tac_Toe();
     private final String url = MySingleton.url;
-    public boolean multiplayer = true;//MySingleton.tic_tac_toe_multiplayer;
+    public boolean multiplayer = MySingleton.tic_tac_toe_multiplayer;
     RequestQueue requestQueue;
     private Thread thread;
     private boolean run;
-    private String host = "Hamza"; //MySingleton.tic_tac_toe_host;
+    private String host = MySingleton.tic_tac_toe_host;
     private String user;
     private int setCol = -1;
     private int setRow = -1;

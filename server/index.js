@@ -211,7 +211,7 @@ app.get("/hangman_host/:host", function (req, res) {
 	res.send("Game created!");
 	game = {
 		host: host,
-		game.words = getWords()
+		words: getWords()
 		};
 	connect_4_games[host] = game;
 	console.log(connect_4_games);
@@ -241,7 +241,7 @@ app.post("/hangman_done/:host/:client/:score/:numErrors", function(req, res) {
 	var numErrors = req.params.numErrors;
 
 	//determine winner
-}
+});
 
 //called at the end of the game until there is a winner
 app.get("/hangman/:host/:user", function (req, res) {
