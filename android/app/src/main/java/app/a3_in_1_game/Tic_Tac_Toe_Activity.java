@@ -2,8 +2,8 @@ package app.a3_in_1_game;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,17 +25,16 @@ import static app.a3_in_1_game.Tic_Tac_Toe.AiCol;
 import static app.a3_in_1_game.Tic_Tac_Toe.AiRow;
 
 public class Tic_Tac_Toe_Activity extends AppCompatActivity {
-   static Button b1,b2,b3,b4,b5,b6,b7,b8,b9, b10;
+    static Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b10;
     static TextView textView;
-    final Tic_Tac_Toe t = new Tic_Tac_Toe();
-
-    RequestQueue requestQueue;
-    private final String url = MySingleton.url;
-    private Thread thread;
     private static boolean myTurn = false;
+    final Tic_Tac_Toe t = new Tic_Tac_Toe();
+    private final String url = MySingleton.url;
+    public boolean multiplayer = true;//MySingleton.tic_tac_toe_multiplayer;
+    RequestQueue requestQueue;
+    private Thread thread;
     private boolean run;
-    private String host = MySingleton.tic_tac_toe_host;
-    public boolean multiplayer = MySingleton.tic_tac_toe_multiplayer;
+    private String host = "Hamza"; //MySingleton.tic_tac_toe_host;
     private String user;
     private int setCol = -1;
     private int setRow = -1;
@@ -43,7 +42,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
     private int score = 0;
     private SharedPreferences sharedPref;
 
-protected void update() {
+    protected void update() {
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -99,7 +98,7 @@ protected void update() {
         if (!multiplayer) {
             return;
         }
-        String req = url + "/tic_tac_toe/" + host + "/" + user + "/" + col + "-" + row;
+        String req = url + "/tic_tac_toe/" + host + "/" + user + "/" + row + "-" + col;
         System.err.println(req);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, req,
                 new Response.Listener<String>() {
@@ -119,6 +118,7 @@ protected void update() {
         });
         stringRequest.setTag(this);
         MySingleton.getInstance(context).addToRequestQueue(stringRequest);
+        myTurn = false;
     }
 
 
@@ -142,21 +142,21 @@ protected void update() {
         b7 = (Button) findViewById(R.id.button7);
         b8 = (Button) findViewById(R.id.button8);
         b9 = (Button) findViewById(R.id.button9);
-        b10 =(Button) findViewById(R.id.button10);
-        textView =(TextView) findViewById(R.id.textView3);
+        b10 = (Button) findViewById(R.id.button10);
+        textView = (TextView) findViewById(R.id.textView3);
 
         if (multiplayer) {
             update();
         }
-       // textView.setText("sdf");
+        // textView.setText("sdf");
 
-       // final Tic_Tac_Toe t = new Tic_Tac_Toe();
+        // final Tic_Tac_Toe t = new Tic_Tac_Toe();
         //t.playGame();
         int turnCounter = 0;
         b10.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                 //Tic_Tac_Toe t = new Tic_Tac_Toe();
+                //Tic_Tac_Toe t = new Tic_Tac_Toe();
                 t.playGame();
                 b1.setText("");
                 b2.setText("");
@@ -170,190 +170,200 @@ protected void update() {
                 score--;
                 String message = "score: " + score;
                 textView.setText(message);
-              //  Context context = getApplicationContext();
-             //   CharSequence text = "Score Decreased!";
-             //   int duration = Toast.LENGTH_SHORT;
+                //  Context context = getApplicationContext();
+                //   CharSequence text = "Score Decreased!";
+                //   int duration = Toast.LENGTH_SHORT;
 
-              //  Toast toast = Toast.makeText(context, text, duration);
-              //  toast.show();
-                 b10.setText("Forfeit?");
+                //  Toast toast = Toast.makeText(context, text, duration);
+                //  toast.show();
+                b10.setText("Forfeit?");
             }
         });
 
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (b1.getText()!= ""){
-                    return;
-                }
-                if (t.gameOver() == true){
-                    return;
-                }
-                b1.setText("X");
-                t.playerTurn(0,0);
-                post(0, 0);
-                if (t.gameOver() == true){
-                    updateScore(1);
-                    b10.setText("Restart");
-                    score++;
-                    return;
-                }
-                boolean check = t.computerTurn();
-                if (t.gameOver() == true){
-                    context = getApplicationContext();
-                    CharSequence text = "You Lose! Score Decreased!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score--;
-                    String message = "score: " + score;
-                    textView.setText(message);
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-                    b10.setText("Restart");
-                    score++;
-                }
-                if (check == true){
-                    context = getApplicationContext();
-                    CharSequence text = "Its a Tie!";
-                    int duration = Toast.LENGTH_SHORT;
-        score++;
-                    b10.setText("Restart");
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();                }
-                else if (!multiplayer) {
-                    updateBoard(AiRow, AiCol);
+                if (myTurn) {
+                    if (b1.getText() != "") {
+                        return;
+                    }
+                    if (t.gameOver() == true) {
+                        return;
+                    }
+                    b1.setText("X");
+                    t.playerTurn(0, 0);
+                    post(0, 0);
+                    if (t.gameOver() == true) {
+                        updateScore(1);
+                        b10.setText("Restart");
+                        score++;
+                        return;
+                    }
+                    boolean check = t.computerTurn();
+                    if (t.gameOver() == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "You Lose! Score Decreased!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score--;
+                        String message = "score: " + score;
+                        textView.setText(message);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                        b10.setText("Restart");
+                        score++;
+                    }
+                    if (check == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "Its a Tie!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score++;
+                        b10.setText("Restart");
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    } else if (!multiplayer) {
+                        updateBoard(AiRow, AiCol);
+                    }
                 }
             }
         });
         b2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (b2.getText()!= ""){
-                    return;
-                }
-                if (t.gameOver() == true){
-                    return;
-                }
-                b2.setText("X");
-                t.playerTurn(0,1);
-                post(0, 1);
-                if (t.gameOver() == true){
-                    updateScore(1);
-                    b10.setText("Restart");
-                    score++;
-                    return;
-                }
-                boolean check = t.computerTurn();
-                if (t.gameOver() == true){
-                    context = getApplicationContext();
-                    CharSequence text = "You Lose! Score Decreased!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score--;
-                    String message = "score: " + score;
-                    textView.setText(message);
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-                    b10.setText("Restart");
-                    score++;
-                }
-                if (check == true){
-                    context = getApplicationContext();
-                    CharSequence text = "Its a Tie!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score++;
-                    b10.setText("Restart");
+                if (myTurn) {
+                    if (b2.getText() != "") {
+                        return;
+                    }
+                    if (t.gameOver() == true) {
+                        return;
+                    }
+                    b2.setText("X");
+                    t.playerTurn(0, 1);
+                    post(0, 1);
+                    if (t.gameOver() == true) {
+                        updateScore(1);
+                        b10.setText("Restart");
+                        score++;
+                        return;
+                    }
+                    boolean check = t.computerTurn();
+                    if (t.gameOver() == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "You Lose! Score Decreased!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score--;
+                        String message = "score: " + score;
+                        textView.setText(message);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                        b10.setText("Restart");
+                        score++;
+                    }
+                    if (check == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "Its a Tie!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score++;
+                        b10.setText("Restart");
 
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    } else if (!multiplayer) {
+                        updateBoard(AiRow, AiCol);
+                    }
                 }
-                else
-                    updateBoard(AiRow, AiCol);
             }
         });
         b3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (b3.getText()!= ""){
-                    return;
-                }
-                if (t.gameOver() == true){
-                    return;
-                }
-                b3.setText("X");
-                t.playerTurn(0,2);
-                post(0, 2);
-                if (t.gameOver() == true){
-                    updateScore(1);
-                    b10.setText("Restart");
-                    score++;
-                    return;
-                }
-                boolean check = t.computerTurn();
-                if (t.gameOver() == true){
-                    context = getApplicationContext();
-                    CharSequence text = "You Lose! Score Decreased!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score--;
-                    String message = "score: " + score;
-                    textView.setText(message);
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-                    b10.setText("Restart");
-                    score++;}
-                if (check == true){
-                    context = getApplicationContext();
-                    CharSequence text = "Its a Tie!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score++;
-                    b10.setText("Restart");
+                if (myTurn) {
+                    if (b3.getText() != "") {
+                        return;
+                    }
+                    if (t.gameOver() == true) {
+                        return;
+                    }
+                    b3.setText("X");
+                    t.playerTurn(0, 2);
+                    post(0, 2);
+                    if (t.gameOver() == true) {
+                        updateScore(1);
+                        b10.setText("Restart");
+                        score++;
+                        return;
+                    }
+                    boolean check = t.computerTurn();
+                    if (t.gameOver() == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "You Lose! Score Decreased!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score--;
+                        String message = "score: " + score;
+                        textView.setText(message);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                        b10.setText("Restart");
+                        score++;
+                    }
+                    if (check == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "Its a Tie!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score++;
+                        b10.setText("Restart");
 
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();                }
-                else if (!multiplayer) {
-                    updateBoard(AiRow, AiCol);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    } else if (!multiplayer) {
+                        updateBoard(AiRow, AiCol);
+                    }
                 }
             }
         });
         b4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (b4.getText()!= ""){
-                    return;
-                }
-                if (t.gameOver() == true){
-                    return;
-                }
-                b4.setText("X");
-                t.playerTurn(1,0);
-                post(1, 0);
-                if (t.gameOver() == true){
-                    updateScore(1);
-                    b10.setText("Restart");
-                    score++;
-                    return;
-                }
-                boolean check = t.computerTurn();
-                if (t.gameOver() == true){
-                    context = getApplicationContext();
-                    CharSequence text = "You Lose! Score Decreased!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score--;
-                    String message = "score: " + score;
-                    textView.setText(message);
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-                    b10.setText("Restart");
-                    score++;}
-                if (check == true){
-                    context = getApplicationContext();
-                    CharSequence text = "Its a Tie!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score++;
-                    b10.setText("Restart");
+                if (myTurn) {
+                    if (b4.getText() != "") {
+                        return;
+                    }
+                    if (t.gameOver() == true) {
+                        return;
+                    }
+                    b4.setText("X");
+                    t.playerTurn(1, 0);
+                    post(1, 0);
+                    if (t.gameOver() == true) {
+                        updateScore(1);
+                        b10.setText("Restart");
+                        score++;
+                        return;
+                    }
+                    boolean check = t.computerTurn();
+                    if (t.gameOver() == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "You Lose! Score Decreased!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score--;
+                        String message = "score: " + score;
+                        textView.setText(message);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                        b10.setText("Restart");
+                        score++;
+                    }
+                    if (check == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "Its a Tie!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score++;
+                        b10.setText("Restart");
 
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();                }
-                else if (!multiplayer) {
-                    updateBoard(AiRow, AiCol);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    } else if (!multiplayer) {
+                        updateBoard(AiRow, AiCol);
+                    }
                 }
             }
         });
@@ -361,261 +371,275 @@ protected void update() {
         b5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (b5.getText()!= ""){
-                    return;
-                }
-                if (t.gameOver() == true){
-                    return;
-                }
-                b5.setText("X");
-                t.playerTurn(1,1);
-                post(1, 1);
-                if (t.gameOver() == true){
-                    updateScore(1);
-                    b10.setText("Restart");
-                    score++;
-                    return;
-                }
-                boolean check = t.computerTurn();
-                if (t.gameOver() == true){
-                    context = getApplicationContext();
-                    CharSequence text = "You Lose! Score Decreased!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score--;
-                    String message = "score: " + score;
-                    textView.setText(message);
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-                    b10.setText("Restart");
-                    score++;}
-                if (check == true){
-                    context = getApplicationContext();
-                    CharSequence text = "Its a Tie!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score++;
-                    b10.setText("Restart");
+                if (myTurn) {
+                    if (b5.getText() != "") {
+                        return;
+                    }
+                    if (t.gameOver() == true) {
+                        return;
+                    }
+                    b5.setText("X");
+                    t.playerTurn(1, 1);
+                    post(1, 1);
+                    if (t.gameOver() == true) {
+                        updateScore(1);
+                        b10.setText("Restart");
+                        score++;
+                        return;
+                    }
+                    boolean check = t.computerTurn();
+                    if (t.gameOver() == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "You Lose! Score Decreased!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score--;
+                        String message = "score: " + score;
+                        textView.setText(message);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                        b10.setText("Restart");
+                        score++;
+                    }
+                    if (check == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "Its a Tie!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score++;
+                        b10.setText("Restart");
 
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();                }
-                else if (!multiplayer) {
-                    updateBoard(AiRow, AiCol);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    } else if (!multiplayer) {
+                        updateBoard(AiRow, AiCol);
+                    }
                 }
             }
         });
         b6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (b6.getText()!= ""){
-                    return;
-                }
-                if (t.gameOver() == true){
-                    return;
-                }
-                b6.setText("X");
-                t.playerTurn(1,2);
-                post(1, 2);
-                if (t.gameOver() == true){
-                    updateScore(1);
-                    b10.setText("Restart");
-                    score++;
-                    return;
-                }
-                boolean check = t.computerTurn();
-                if (t.gameOver() == true){
-                    context = getApplicationContext();
-                    CharSequence text = "You Lose! Score Decreased!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score--;
-                    String message = "score: " + score;
-                    textView.setText(message);
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-                    b10.setText("Restart");
-                    score++;}
-                if (check == true){
-                    context = getApplicationContext();
-                    CharSequence text = "Its a Tie!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score++;
-                    b10.setText("Restart");
+                if (myTurn) {
+                    if (b6.getText() != "") {
+                        return;
+                    }
+                    if (t.gameOver() == true) {
+                        return;
+                    }
+                    b6.setText("X");
+                    t.playerTurn(1, 2);
+                    post(1, 2);
+                    if (t.gameOver() == true) {
+                        updateScore(1);
+                        b10.setText("Restart");
+                        score++;
+                        return;
+                    }
+                    boolean check = t.computerTurn();
+                    if (t.gameOver() == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "You Lose! Score Decreased!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score--;
+                        String message = "score: " + score;
+                        textView.setText(message);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                        b10.setText("Restart");
+                        score++;
+                    }
+                    if (check == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "Its a Tie!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score++;
+                        b10.setText("Restart");
 
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();                }
-                else if (!multiplayer) {
-                    updateBoard(AiRow, AiCol);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    } else if (!multiplayer) {
+                        updateBoard(AiRow, AiCol);
+                    }
                 }
             }
         });
         b7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (b7.getText()!= ""){
-                    return;
-                }
-                if (t.gameOver() == true){
-                    return;
-                }
-                b7.setText("X");
-                t.playerTurn(2,0);
-                post(2, 0);
-                if (t.gameOver() == true){
-                    updateScore(1);
-                    b10.setText("Restart");
-                    score++;
-                    return;
-                }
-                boolean check = t.computerTurn();
-                if (t.gameOver() == true){
-                    context = getApplicationContext();
-                    CharSequence text = "You Lose! Score Decreased!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score--;
-                    String message = "score: " + score;
-                    textView.setText(message);
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-                    b10.setText("Restart");
-                    score++;}
-                if (check == true){
-                    context = getApplicationContext();
-                    CharSequence text = "Its a Tie!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score++;
-                    b10.setText("Restart");
+                if (myTurn) {
+                    if (b7.getText() != "") {
+                        return;
+                    }
+                    if (t.gameOver() == true) {
+                        return;
+                    }
+                    b7.setText("X");
+                    t.playerTurn(2, 0);
+                    post(2, 0);
+                    if (t.gameOver() == true) {
+                        updateScore(1);
+                        b10.setText("Restart");
+                        score++;
+                        return;
+                    }
+                    boolean check = t.computerTurn();
+                    if (t.gameOver() == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "You Lose! Score Decreased!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score--;
+                        String message = "score: " + score;
+                        textView.setText(message);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                        b10.setText("Restart");
+                        score++;
+                    }
+                    if (check == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "Its a Tie!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score++;
+                        b10.setText("Restart");
 
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();                }
-                else if (!multiplayer) {
-                    updateBoard(AiRow, AiCol);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    } else if (!multiplayer) {
+                        updateBoard(AiRow, AiCol);
+                    }
                 }
             }
         });
         b8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (b8.getText()!= ""){
-                    return;
-                }
-                if (t.gameOver() == true){
-                    return;
-                }
-                b8.setText("X");
+                if (myTurn) {
+                    if (b8.getText() != "") {
+                        return;
+                    }
+                    if (t.gameOver() == true) {
+                        return;
+                    }
+                    b8.setText("X");
 
-                t.playerTurn(2,1);
-                post(2, 1);
-                if (t.gameOver() == true){
-                    updateScore(1);
-                    b10.setText("Restart");
-                    score++;
+                    t.playerTurn(2, 1);
+                    post(2, 1);
+                    if (t.gameOver() == true) {
+                        updateScore(1);
+                        b10.setText("Restart");
+                        score++;
 
-                    return;
-                }
-                boolean check = t.computerTurn();
-                if (t.gameOver() == true){
-                    context = getApplicationContext();
-                    CharSequence text = "You Lose! Score Decreased!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score--;
-                    String message = "score: " + score;
-                    textView.setText(message);
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-                    b10.setText("Restart");
-                    score++;}
-                if (check == true){
-                    context = getApplicationContext();
-                    CharSequence text = "Its a Tie!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score++;
-                    b10.setText("Restart");
+                        return;
+                    }
+                    boolean check = t.computerTurn();
+                    if (t.gameOver() == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "You Lose! Score Decreased!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score--;
+                        String message = "score: " + score;
+                        textView.setText(message);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                        b10.setText("Restart");
+                        score++;
+                    }
+                    if (check == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "Its a Tie!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score++;
+                        b10.setText("Restart");
 
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    } else if (!multiplayer) {
+                        updateBoard(AiRow, AiCol);
+                    }
                 }
-                else if (!multiplayer) {
-                    updateBoard(AiRow, AiCol);
-                }
-
             }
         });
         b9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (b9.getText()!= ""){
-                    return;
-                }
-                if (t.gameOver() == true){
-                    return;
-                }
-                b9.setText("X");
+                if (myTurn) {
+                    if (b9.getText() != "") {
+                        return;
+                    }
+                    if (t.gameOver() == true) {
+                        return;
+                    }
+                    b9.setText("X");
 
-                t.playerTurn(2,2);
-                post(2, 2);
-                if (t.gameOver() == true){
-                    updateScore(1);
-                    return;
-                }
-                boolean check = t.computerTurn();
-                if (t.gameOver() == true){
-                    context = getApplicationContext();
-                    CharSequence text = "You Lose! Score Decreased!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score--;
-                    String message = "score: " + score;
-                    textView.setText(message);
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();                }
-                if (check == true){
-                    context = getApplicationContext();
-                    CharSequence text = "Its a Tie!";
-                    int duration = Toast.LENGTH_SHORT;
-                    score++;
-                    b10.setText("Restart");
+                    t.playerTurn(2, 2);
+                    post(2, 2);
+                    if (t.gameOver() == true) {
+                        updateScore(1);
+                        return;
+                    }
+                    boolean check = t.computerTurn();
+                    if (t.gameOver() == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "You Lose! Score Decreased!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score--;
+                        String message = "score: " + score;
+                        textView.setText(message);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    }
+                    if (check == true) {
+                        context = getApplicationContext();
+                        CharSequence text = "Its a Tie!";
+                        int duration = Toast.LENGTH_SHORT;
+                        score++;
+                        b10.setText("Restart");
 
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();                }
-                else if (!multiplayer) {
-                    updateBoard(AiRow, AiCol);
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    } else if (!multiplayer) {
+                        updateBoard(AiRow, AiCol);
+                    }
                 }
-
             }
         });
-
-
     }
 
     private void updateBoard(int row, int col) {
-        if (row == 0 && col == 0){
+        if (multiplayer) {
+            t.board[row][col] = '0';
+        }
+
+        if (row == 0 && col == 0) {
             b1.setText("O");
         }
-        if (row == 0 && col == 1){
+        if (row == 0 && col == 1) {
             b2.setText("O");
         }
-        if (row == 0 && col == 2){
+        if (row == 0 && col == 2) {
             b3.setText("O");
         }
-        if (row == 1 && col == 0){
+        if (row == 1 && col == 0) {
             b4.setText("O");
         }
-        if (row == 1 && col == 1){
+        if (row == 1 && col == 1) {
             b5.setText("O");
         }
-        if (row == 1 && col == 2){
+        if (row == 1 && col == 2) {
             b6.setText("O");
         }
-        if (row == 2 && col == 0){
+        if (row == 2 && col == 0) {
             b7.setText("O");
         }
-        if (row == 2 && col == 1){
+        if (row == 2 && col == 1) {
             b8.setText("O");
         }
-        if (row == 2 && col == 2){
+        if (row == 2 && col == 2) {
             b9.setText("O");
         }
 
     }
 
-    public void updateScore(int player){
+    public void updateScore(int player) {
         context = getApplicationContext();
         CharSequence text = "You win!";
         int duration = Toast.LENGTH_SHORT;
@@ -624,7 +648,7 @@ protected void update() {
         toast.show();
         score++;
         String message = "score: " + score;
-    textView.setText(message);
+        textView.setText(message);
     }
 
     @Override

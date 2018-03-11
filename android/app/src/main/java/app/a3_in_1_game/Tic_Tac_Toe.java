@@ -10,7 +10,7 @@ import java.util.*;
 // TODO: Use 2D array to store the board
 
 public class Tic_Tac_Toe {
-public static int AiRow;
+	public static int AiRow;
 	public static int AiCol;
 
 
@@ -21,17 +21,19 @@ public static int AiRow;
 	private static final int AI = 1;
 
 	
-	private char[][] board; //game board
+	protected char[][] board; //game board
 	private int currentUser; //currentUser, 0 for player, 1 for AI
 	private int spacesOccupied; //the number of spaces that are occupied
 	private String[] userSpaces; //the spaces the user has occupied
 	private String[] comSpaces; //the spaces the AI has occupied
 	private int userIndex; //index of userSpaces
 	private int comIndex; //index of comSpaces
+    private boolean multiplayer;
 
 	//constructor
 	public Tic_Tac_Toe() {
-		newGame();
+		multiplayer = MySingleton.tic_tac_toe_multiplayer;
+	    newGame();
 	}
 
 	//creates a new game of tic tac toe
@@ -123,7 +125,7 @@ public static int AiRow;
 			//this.userSpaces[userIndex++] = "" + row + col;
 		}
 
-		//player = 1, AI, palce o
+		//player = 0, AI, palce o
 		else {
 			this.board[row][col] = COMPUTERO;
 
@@ -185,7 +187,7 @@ public static int AiRow;
 	//make the AI's move
 	public boolean computerTurn() {
 		if (multiplayer) {
-			return;
+			return false;
 		}
 		if (spacesOccupied == 9)
 			return true;
