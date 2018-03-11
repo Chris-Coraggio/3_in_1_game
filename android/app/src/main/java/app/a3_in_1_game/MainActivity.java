@@ -23,6 +23,8 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
+    String old_user;
+
     protected void join(final View view, final String game, final String user) {
         String req;
         switch (game) {
@@ -285,16 +287,38 @@ public class MainActivity extends AppCompatActivity {
         winBuild.show();
     }
 
+    protected void setUsername(final View view, final String game,
+                                 final String user, final String old_user) {
+        String req = MySingleton.url + "/set_username/" + old_user + "-" + user;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, req, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.equals("User added!")) {
+                    createDialog(view, game, user);
+                } else {
+                    Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "(checkUsername) " + error.toString(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+        stringRequest.setTag(this);
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final EditText nameText = (EditText) findViewById(R.id.nickname);
         final SharedPreferences sharedPref = getSharedPreferences("myPref", Context.MODE_PRIVATE);
-        String user = sharedPref.getString("user", "");
-        nameText.setText(user);
-
+        final String[] user = {sharedPref.getString("user", "")};
+        nameText.setText(user[0]);
 
         // Tic Tac Toe button
         Button tic_tac_toe_launch = (Button) findViewById(R.id.buttonTicTacToe);
@@ -302,11 +326,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(final View view) {
                 SharedPreferences.Editor editor = sharedPref.edit();
-                final String user = nameText.getText().toString();
-                editor.putString("user", user);
+                old_user = user[0];
+                user[0] = nameText.getText().toString();
+                editor.putString("user", user[0]);
                 editor.commit();
 
-                createDialog(view, "Tic Tac Toe", user);
+                if (old_user.equals(user[0])) {
+                    createDialog(view, "Tic Tac Toe", user[0]);
+                } else {
+                    setUsername(view, "Tic Tac Toe", user[0], old_user);
+                }
             }
         });
 
@@ -316,11 +345,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(final View view) {
                 SharedPreferences.Editor editor = sharedPref.edit();
-                final String user = nameText.getText().toString();
-                editor.putString("user", user);
+                old_user = user[0];
+                user[0] = nameText.getText().toString();
+                editor.putString("user", user[0]);
                 editor.commit();
 
-                createDialog(view, "Connect 4", user);
+                if (old_user.equals(user[0])) {
+                    createDialog(view, "Connect 4", user[0]);
+                } else {
+                    setUsername(view, "Connect 4", user[0], old_user);
+                }
             }
         });
 

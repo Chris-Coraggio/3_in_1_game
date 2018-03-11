@@ -5,8 +5,6 @@ var port = process.env.PORT || 8080;
 
 //var pool  = mysql.createPool(process.env.JAWSDB_URL);
 
-var connect_4_games = {};
-
 function checkPlayer(user, game) {
 	if (game.host == user || game.client == user) {
 		return true;
@@ -26,6 +24,31 @@ function changeTurn(game) {
 app.get("/", function (req, res) {
     res.send("Hello World!");
 });
+
+var users = [];
+
+app.get("/set_username/:old-:user", function(req, res) {
+	// Delete old username
+	var old = req.params.old;
+	var index = users.indexOf(old);
+	if (index > -1) {
+		users.splice(index, 1);
+	}
+	
+	// Check if new username is unique
+	var user = req.params.user;
+	if (users.indexOf(user) > -1) {
+		console.log("Username not unique");
+		res.send("Username not unique");
+	}
+	else {
+		users.push(user);
+		console.log(users);
+		res.send("User added!");
+	}
+});
+
+var connect_4_games = {};
 
 app.get("/connect_4_host/:host", function (req, res) {
 	var host = req.params.host;

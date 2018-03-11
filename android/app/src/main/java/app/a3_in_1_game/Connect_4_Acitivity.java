@@ -270,6 +270,18 @@ public class Connect_4_Acitivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (multiplayer) {
+            myTurn = false;
+            run = true;
+            update();
+        } else {
+            myTurn = true;
+        }
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         if (multiplayer) {
