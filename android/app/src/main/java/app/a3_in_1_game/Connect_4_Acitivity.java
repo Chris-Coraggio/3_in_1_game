@@ -63,7 +63,7 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                                         if (myTurn) {
                                             setCol = response.getInt("col");
                                             if (setCol != -1) {
-                                                ((Connect_4_Acitivity) context).runOnUiThread(new Runnable() {
+                                                (Connect_4_Acitivity.this).runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
                                                         drop(setCol, connect_4.CIRCLE);

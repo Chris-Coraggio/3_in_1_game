@@ -25,8 +25,8 @@ import static app.a3_in_1_game.Tic_Tac_Toe.AiCol;
 import static app.a3_in_1_game.Tic_Tac_Toe.AiRow;
 
 public class Tic_Tac_Toe_Activity extends AppCompatActivity {
-    static Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b10;
-    static TextView textView;
+    private Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b10;
+    private TextView textView;
     private static boolean myTurn = false;
     final Tic_Tac_Toe t = new Tic_Tac_Toe();
     private final String url = MySingleton.url;
@@ -66,7 +66,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                                                         //drop(setCol, connect_4.CIRCLE);
                                                         updateBoard(setRow, setCol);
                                                         t.spacesOccupied++;
-                                                        if (t.gameOver() == true) {
+                                                        if (t.gameOver()) {
                                                             context = getApplicationContext();
                                                             CharSequence text = "You Lose! Score Decreased!";
                                                             int duration = Toast.LENGTH_SHORT;
@@ -75,7 +75,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                                                             textView.setText(message);
                                                             Toast toast = Toast.makeText(context, text, duration);
                                                             toast.show();
-                                                            b10.setText("Restart");
+                                                            b10.setText(R.string.restart);
                                                             score++;
                                                         }
                                                         if (t.spacesOccupied == 9) {
@@ -83,7 +83,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                                                             CharSequence text = "Its a Tie!";
                                                             int duration = Toast.LENGTH_SHORT;
                                                             score++;
-                                                            b10.setText("Restart");
+                                                            b10.setText(R.string.restart);
                                                             Toast toast = Toast.makeText(context, text, duration);
                                                             toast.show();
                                                         }
@@ -169,8 +169,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
 
         if (multiplayer) {
             update();
-        }
-        else {
+        } else {
             myTurn = true;
         }
         // textView.setText("sdf");
@@ -201,7 +200,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
 
                 //  Toast toast = Toast.makeText(context, text, duration);
                 //  toast.show();
-                b10.setText("Forfeit?");
+                b10.setText(R.string.forfeit);
             }
         });
 
@@ -212,20 +211,20 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     if (b1.getText() != "") {
                         return;
                     }
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         return;
                     }
                     b1.setText("X");
                     t.playerTurn(0, 0);
                     post(0, 0);
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         updateScore(1);
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                         return;
                     }
                     boolean check = t.computerTurn();
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         context = getApplicationContext();
                         CharSequence text = "You Lose! Score Decreased!";
                         int duration = Toast.LENGTH_SHORT;
@@ -234,15 +233,15 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         textView.setText(message);
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                     }
-                    if (check == true) {
+                    if (check) {
                         context = getApplicationContext();
                         CharSequence text = "Its a Tie!";
                         int duration = Toast.LENGTH_SHORT;
                         score++;
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
                     } else if (!multiplayer) {
@@ -258,20 +257,20 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     if (b2.getText() != "") {
                         return;
                     }
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         return;
                     }
                     b2.setText("X");
                     t.playerTurn(0, 1);
                     post(0, 1);
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         updateScore(1);
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                         return;
                     }
                     boolean check = t.computerTurn();
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         context = getApplicationContext();
                         CharSequence text = "You Lose! Score Decreased!";
                         int duration = Toast.LENGTH_SHORT;
@@ -280,15 +279,15 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         textView.setText(message);
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                     }
-                    if (check == true) {
+                    if (check) {
                         context = getApplicationContext();
                         CharSequence text = "Its a Tie!";
                         int duration = Toast.LENGTH_SHORT;
                         score++;
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -305,20 +304,20 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     if (b3.getText() != "") {
                         return;
                     }
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         return;
                     }
                     b3.setText("X");
                     t.playerTurn(0, 2);
                     post(0, 2);
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         updateScore(1);
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                         return;
                     }
                     boolean check = t.computerTurn();
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         context = getApplicationContext();
                         CharSequence text = "You Lose! Score Decreased!";
                         int duration = Toast.LENGTH_SHORT;
@@ -327,15 +326,15 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         textView.setText(message);
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                     }
-                    if (check == true) {
+                    if (check) {
                         context = getApplicationContext();
                         CharSequence text = "Its a Tie!";
                         int duration = Toast.LENGTH_SHORT;
                         score++;
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -352,20 +351,20 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     if (b4.getText() != "") {
                         return;
                     }
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         return;
                     }
                     b4.setText("X");
                     t.playerTurn(1, 0);
                     post(1, 0);
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         updateScore(1);
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                         return;
                     }
                     boolean check = t.computerTurn();
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         context = getApplicationContext();
                         CharSequence text = "You Lose! Score Decreased!";
                         int duration = Toast.LENGTH_SHORT;
@@ -374,15 +373,15 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         textView.setText(message);
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                     }
-                    if (check == true) {
+                    if (check) {
                         context = getApplicationContext();
                         CharSequence text = "Its a Tie!";
                         int duration = Toast.LENGTH_SHORT;
                         score++;
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -400,20 +399,20 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     if (b5.getText() != "") {
                         return;
                     }
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         return;
                     }
                     b5.setText("X");
                     t.playerTurn(1, 1);
                     post(1, 1);
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         updateScore(1);
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                         return;
                     }
                     boolean check = t.computerTurn();
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         context = getApplicationContext();
                         CharSequence text = "You Lose! Score Decreased!";
                         int duration = Toast.LENGTH_SHORT;
@@ -422,15 +421,15 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         textView.setText(message);
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                     }
-                    if (check == true) {
+                    if (check) {
                         context = getApplicationContext();
                         CharSequence text = "Its a Tie!";
                         int duration = Toast.LENGTH_SHORT;
                         score++;
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -447,20 +446,20 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     if (b6.getText() != "") {
                         return;
                     }
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         return;
                     }
                     b6.setText("X");
                     t.playerTurn(1, 2);
                     post(1, 2);
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         updateScore(1);
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                         return;
                     }
                     boolean check = t.computerTurn();
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         context = getApplicationContext();
                         CharSequence text = "You Lose! Score Decreased!";
                         int duration = Toast.LENGTH_SHORT;
@@ -469,15 +468,15 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         textView.setText(message);
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                     }
-                    if (check == true) {
+                    if (check) {
                         context = getApplicationContext();
                         CharSequence text = "Its a Tie!";
                         int duration = Toast.LENGTH_SHORT;
                         score++;
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -494,20 +493,20 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     if (b7.getText() != "") {
                         return;
                     }
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         return;
                     }
                     b7.setText("X");
                     t.playerTurn(2, 0);
                     post(2, 0);
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         updateScore(1);
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                         return;
                     }
                     boolean check = t.computerTurn();
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         context = getApplicationContext();
                         CharSequence text = "You Lose! Score Decreased!";
                         int duration = Toast.LENGTH_SHORT;
@@ -516,15 +515,15 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         textView.setText(message);
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                     }
-                    if (check == true) {
+                    if (check) {
                         context = getApplicationContext();
                         CharSequence text = "Its a Tie!";
                         int duration = Toast.LENGTH_SHORT;
                         score++;
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -541,22 +540,20 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     if (b8.getText() != "") {
                         return;
                     }
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         return;
                     }
                     b8.setText("X");
-
                     t.playerTurn(2, 1);
                     post(2, 1);
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         updateScore(1);
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
-
                         return;
                     }
                     boolean check = t.computerTurn();
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         context = getApplicationContext();
                         CharSequence text = "You Lose! Score Decreased!";
                         int duration = Toast.LENGTH_SHORT;
@@ -565,15 +562,15 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         textView.setText(message);
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
                         score++;
                     }
-                    if (check == true) {
+                    if (check) {
                         context = getApplicationContext();
                         CharSequence text = "Its a Tie!";
                         int duration = Toast.LENGTH_SHORT;
                         score++;
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -590,19 +587,18 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     if (b9.getText() != "") {
                         return;
                     }
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         return;
                     }
                     b9.setText("X");
-
                     t.playerTurn(2, 2);
                     post(2, 2);
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         updateScore(1);
                         return;
                     }
                     boolean check = t.computerTurn();
-                    if (t.gameOver() == true) {
+                    if (t.gameOver()) {
                         context = getApplicationContext();
                         CharSequence text = "You Lose! Score Decreased!";
                         int duration = Toast.LENGTH_SHORT;
@@ -612,12 +608,12 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
                     }
-                    if (check == true) {
+                    if (check) {
                         context = getApplicationContext();
                         CharSequence text = "Its a Tie!";
                         int duration = Toast.LENGTH_SHORT;
                         score++;
-                        b10.setText("Restart");
+                        b10.setText(R.string.restart);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -683,8 +679,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
             myTurn = false;
             run = true;
             update();
-        }
-        else {
+        } else {
             myTurn = true;
         }
     }

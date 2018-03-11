@@ -182,8 +182,10 @@ public class Tic_Tac_Toe {
 
     //make the AI's move
     public boolean computerTurn() {
-        if (spacesOccupied == 9)
+        if (spacesOccupied == 9) {
             return true;
+        }
+
         if (multiplayer) {
             return false;
         }
