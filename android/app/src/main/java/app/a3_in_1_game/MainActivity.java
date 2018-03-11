@@ -24,6 +24,7 @@ import org.json.JSONObject;
 public class MainActivity extends AppCompatActivity {
 
     protected boolean unique;
+    protected boolean[] run;
 
     protected void join(final View view, final String game, final String user) {
         String req;
@@ -88,9 +89,8 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final boolean[] run = {true};
+                run[0] = true;
                 while (run[0]) {
-
                     String req;
                     switch (game) {
                         case "Tic Tac Toe":
@@ -350,6 +350,7 @@ public class MainActivity extends AppCompatActivity {
         nameText.setText(user[0]);
         final String[] old_user = new String[1];
         unique = true;
+        run = new boolean[1];
 
         // Tic Tac Toe button
         Button tic_tac_toe_launch = (Button) findViewById(R.id.buttonTicTacToe);
@@ -362,6 +363,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("user", user[0]);
                 editor.commit();
 
+                run[0] = false;
                 if (old_user[0].equals(user[0])) {
                     if (!unique) {
                         //check again from server
@@ -386,11 +388,17 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("user", user[0]);
                 editor.commit();
 
-//                if (old_user[0].equals(user[0])) {
-//                    createDialog(view, "Connect 4", user[0]);
-//                } else {
-//                    setUsername(view, "Connect 4", user[0], old_user[0]);
-//                }
+                run[0] = false;
+                if (old_user[0].equals(user[0])) {
+                    if (!unique) {
+                        //check again from server
+                        setUsername(view, "Connect 4", user[0]);
+                    } else {
+                        createDialog(view, "Connect 4", user[0]);
+                    }
+                } else {
+                    setAndDeleteUsername(view, "Connect 4", user[0], old_user[0]);
+                }
             }
         });
 
@@ -404,6 +412,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("user", user);
                 editor.commit();
 
+                run[0] = false;
                 Intent intent = new Intent(view.getContext(), Hangman_Activity.class);
                 startActivity(intent);
             }
@@ -417,5 +426,11 @@ public class MainActivity extends AppCompatActivity {
         MySingleton.tic_tac_toe_multiplayer = false;
 //        TODO: HANGMAN
 //        MySingleton.hangman_multiplayer = false;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        run[0] = false;
     }
 }
