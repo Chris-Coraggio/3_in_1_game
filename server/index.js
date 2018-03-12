@@ -84,10 +84,17 @@ app.get("/connect_4_join/:host/:client", function (req, res) {
 	console.log("Connect 4: " + host);
 	console.log("Being joined by " + client);
 	if (host in connect_4_games) {
+		var turn;
+		if (Math.random() >= 0.5) {
+			turn = host;
+		}
+		else {
+			turn = client;
+		}
 		var game = connect_4_games[host];
 		res.send("Game joined!");
 		game.client = client;
-		game.turn = game.host;
+		game.turn = turn;
 		game.col = "-1";
 		console.log(game);
 	}
@@ -172,11 +179,18 @@ app.get("/tic_tac_toe_join/:host/:client", function (req, res) {
 	var client = req.params.client;
 	console.log("Tic Tac Toe: " + host);
 	console.log("Being joined by " + client);
-	if (host in tic_tac_toe_games) {	
+	if (host in tic_tac_toe_games) {
+		var turn;
+		if (Math.random() >= 0.5) {
+			turn = host;
+		}
+		else {
+			turn = client;
+		}		
 		var game = tic_tac_toe_games[host];
 		res.send("Game joined!");
 		game.client = client;
-		game.turn = game.host;
+		game.turn = turn;
 		game.col = "-1";
 		game.row = "-1";
 		console.log(game);

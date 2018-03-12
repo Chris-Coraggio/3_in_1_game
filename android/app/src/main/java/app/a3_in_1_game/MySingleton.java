@@ -15,6 +15,7 @@ public class MySingleton {
     private RequestQueue mRequestQueue;
     private static Context mCtx;
 //    static final String url = "http://10.0.2.2:8080";
+//    static final String url = "http://192.168.0.20:8080";
     static final String url = "https://server-3in1.herokuapp.com";
 
     static String connect_4_host;
