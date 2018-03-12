@@ -362,7 +362,14 @@ public class MainActivity extends AppCompatActivity {
                 user[0] = nameText.getText().toString();
                 editor.putString("user", user[0]);
                 editor.commit();
-
+                if (user[0].length() < 3 || user[0].length() > 14){
+                    Toast.makeText(getApplicationContext(), "Username must be between 4 and 15 characters long!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (isValid(user[0].toUpperCase()) == false && isAlpha(user[0]) == false){
+                    Toast.makeText(getApplicationContext(), "Username must be only letters and numbers!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 run[0] = false;
                 if (old_user[0].equals(user[0])) {
                     if (!unique) {
@@ -387,6 +394,14 @@ public class MainActivity extends AppCompatActivity {
                 user[0] = nameText.getText().toString();
                 editor.putString("user", user[0]);
                 editor.commit();
+                if (user[0].length() < 3 || user[0].length() > 14){
+                    Toast.makeText(getApplicationContext(), "Username must be between 4 and 15 characters long!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (isValid(user[0].toUpperCase()) == false && isAlpha(user[0]) == false){
+                    Toast.makeText(getApplicationContext(), "Username must be only letters and numbers!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 run[0] = false;
                 if (old_user[0].equals(user[0])) {
@@ -411,14 +426,28 @@ public class MainActivity extends AppCompatActivity {
                 String user = nameText.getText().toString();
                 editor.putString("user", user);
                 editor.commit();
+                System.out.println(isValid(user.toUpperCase()) + " " +isAlpha(user) );
 
                 run[0] = false;
-                Intent intent = new Intent(view.getContext(), Hangman_Activity.class);
-                startActivity(intent);
+                if (user.length() < 3 || user.length() > 14){
+                    Toast.makeText(getApplicationContext(), "Username must be between 4 and 15 characters long!", Toast.LENGTH_SHORT).show();
+                }
+                else if (isValid(user.toUpperCase()) == false && isAlpha(user) == false){
+                    Toast.makeText(getApplicationContext(), "Username must be only letters and numbers!", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Intent intent = new Intent(view.getContext(), Hangman_Activity.class);
+                    startActivity(intent);
+                }
             }
         });
     }
-
+    public boolean isValid(String s) {
+        return s.matches("[a-zA-Z0-9]*");
+    }
+    public boolean isAlpha(String s) {
+        return s.matches("[a-zA-Z]+");
+    }
     @Override
     protected void onResume() {
         super.onResume();
