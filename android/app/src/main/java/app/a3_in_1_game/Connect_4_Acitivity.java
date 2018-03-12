@@ -59,11 +59,14 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                                 public void onResponse(JSONObject response) {
                                     try {
                                         System.err.println("RESPONSE: " + response.toString());
+                                        if (myTurn) {
+                                            return;
+                                        }
                                         myTurn = Objects.equals(response.getString("turn"), user);
                                         if (myTurn) {
                                             setCol = response.getInt("col");
                                             if (setCol != -1) {
-                                                ((Connect_4_Acitivity) context).runOnUiThread(new Runnable() {
+                                                (Connect_4_Acitivity.this).runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
                                                         drop(setCol, connect_4.CIRCLE);
@@ -125,12 +128,12 @@ public class Connect_4_Acitivity extends AppCompatActivity {
         connect_4 = new Connect_4();
         boardView = findViewById(R.id.game_board);
         context = this;
-        run = true;
         sharedPref = getSharedPreferences("myPref", Context.MODE_PRIVATE);
         user = sharedPref.getString("user", "");
         requestQueue = MySingleton.getInstance(this.getApplicationContext()).getRequestQueue();
         setBoard();
         if (multiplayer) {
+            run = true;
             update();
         }
 
@@ -210,6 +213,9 @@ public class Connect_4_Acitivity extends AppCompatActivity {
         anim.setFillAfter(true);
         cell.startAnimation(anim);
         if (connect_4.checkWinner(currentPlayer)) {
+            if (multiplayer) {
+                run = false;
+            }
             win(currentPlayer);
         }
     }
@@ -266,6 +272,18 @@ public class Connect_4_Acitivity extends AppCompatActivity {
             for (int col = 0; col < connect_4.NUM_COLS; col++) {
                 board[row][col].setImageResource(android.R.color.transparent);
             }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (multiplayer) {
+            myTurn = false;
+            run = true;
+            update();
+        } else {
+            myTurn = true;
         }
     }
 

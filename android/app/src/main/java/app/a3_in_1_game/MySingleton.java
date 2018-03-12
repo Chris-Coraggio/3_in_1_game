@@ -11,18 +11,20 @@ import com.android.volley.toolbox.Volley;
  */
 
 public class MySingleton {
-    private static MySingleton mInstance;
-    private RequestQueue mRequestQueue;
-    private static Context mCtx;
-    static final String url = "http://10.0.2.2:8080";
-    //static final String url = "https://server-3in1.herokuapp.com";
+    //    static final String url = "http://10.0.2.2:8080";
+//    static final String url = "http://192.168.0.20:8080";
+    static final String url = "https://server-3in1.herokuapp.com";
 
+    static String tic_tac_toe_host;
+    static boolean tic_tac_toe_multiplayer;
     static String connect_4_host;
     static boolean connect_4_multiplayer;
-
     static String hangman_host;
     static boolean hangman_multiplayer;
-    
+    private static MySingleton mInstance;
+    private static Context mCtx;
+    private RequestQueue mRequestQueue;
+
 
     private MySingleton(Context context) {
         mCtx = context;

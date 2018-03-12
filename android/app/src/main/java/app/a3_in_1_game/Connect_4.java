@@ -2,12 +2,6 @@
  * Created by ritzbitz on 2/9/18.
  */
 
-
-// TODO: Code this class in IntelliJ and copy the code over
-// TODO: Use STDIN and STDOUT until we meet and implement the GUI
-// TODO: Make sure code is commented and readable
-// TODO: Make helper functions
-// TODO: Use 2D array to store the board
 package app.a3_in_1_game;
 
 import java.util.HashMap;
@@ -75,7 +69,6 @@ public class Connect_4 {
      * @return
      */
     public boolean checkWinner(char currentPlayer) {
-        //TODO IMPLEMENT METHOD
         //checks vertical
         for (int j = 0; j < gameBoard[0].length; j++) {
             for (int i = 0; i < 3; i++) {

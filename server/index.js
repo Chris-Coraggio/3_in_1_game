@@ -6,8 +6,6 @@ var port = process.env.PORT || 8080;
 
 //var pool  = mysql.createPool(process.env.JAWSDB_URL);
 
-var connect_4_games = {};
-
 function checkPlayer(user, game) {
 	if (game.host == user || game.client == user) {
 		return true;
@@ -28,10 +26,52 @@ app.get("/", function (req, res) {
     res.send("Hello World!");
 });
 
+var users = [];
+
+app.get("/set_username/:user", function(req, res) {
+	// Check if new username is unique
+	var user = req.params.user;
+	if (users.indexOf(user) > -1) {
+		console.log("Username not unique");
+		res.send("Username not unique");
+	}
+	else {
+		users.push(user);
+		console.log(users);
+		res.send("Username added!");
+	}
+});
+
+app.get("/set_and_delete_username/:old-:user", function(req, res) {
+	// Delete old username
+	var old = req.params.old;
+	var index = users.indexOf(old);
+	if (index > -1) {
+		users.splice(index, 1);
+	}
+	
+	// Check if new username is unique
+	var user = req.params.user;
+	if (users.indexOf(user) > -1) {
+		console.log("Username not unique");
+		res.send("Username not unique");
+	}
+	else {
+		users.push(user);
+		console.log(users);
+		res.send("Username added!");
+	}
+});
+
+var connect_4_games = {};
+
 app.get("/connect_4_host/:host", function (req, res) {
 	var host = req.params.host;
 	console.log("New Connect 4: " + host);
 	res.send("Game created!");
+	if (host in connect_4_games) {
+		delete connect_4_games[host];
+	}
 	game = {
 		host: host
 		};
@@ -44,11 +84,18 @@ app.get("/connect_4_join/:host/:client", function (req, res) {
 	var client = req.params.client;
 	console.log("Connect 4: " + host);
 	console.log("Being joined by " + client);
-	if (host in connect_4_games) {	
+	if (host in connect_4_games) {
+		var turn;
+		if (Math.random() >= 0.5) {
+			turn = host;
+		}
+		else {
+			turn = client;
+		}
 		var game = connect_4_games[host];
 		res.send("Game joined!");
 		game.client = client;
-		game.turn = game.host;
+		game.turn = turn;
 		game.col = "-1";
 		console.log(game);
 	}
@@ -118,6 +165,9 @@ app.get("/tic_tac_toe_host/:host", function (req, res) {
 	var host = req.params.host;
 	console.log("New Tic Tac Toe: " + host);
 	res.send("Game created!");
+	if (host in tic_tac_toe_games) {
+		delete tic_tac_toe_games[host];
+	}
 	game = {
 		host: host
 		};
@@ -130,11 +180,18 @@ app.get("/tic_tac_toe_join/:host/:client", function (req, res) {
 	var client = req.params.client;
 	console.log("Tic Tac Toe: " + host);
 	console.log("Being joined by " + client);
-	if (host in tic_tac_toe_games) {	
+	if (host in tic_tac_toe_games) {
+		var turn;
+		if (Math.random() >= 0.5) {
+			turn = host;
+		}
+		else {
+			turn = client;
+		}		
 		var game = tic_tac_toe_games[host];
 		res.send("Game joined!");
 		game.client = client;
-		game.turn = game.host;
+		game.turn = turn;
 		game.col = "-1";
 		game.row = "-1";
 		console.log(game);
@@ -210,6 +267,9 @@ app.get("/hangman_host/:host", function (req, res) {
 	var host = req.params.host;
 	console.log("New Hangman: " + host);
 	res.send("Game created!");
+	if (host in hangman_games) {
+		delete hangman_games[host];
+	}
 	game = {
 		host: host,
 		words: getWords()
