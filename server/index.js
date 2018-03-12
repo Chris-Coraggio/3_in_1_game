@@ -304,42 +304,31 @@ app.post("/hangman_done/:host/:client/:score/:numErrors", function(req, res) {
 
 	//determine winner
 	var game = hangman_games[host];
-	if(game.score1 == null){
-		game.score1 = score;
-		game.errors1 = numErrors;
-		res.send("No error");
-	}else if(game.score2 == null){
-		if(score > game.score1){
-			//winner
-			game.winner = client;
-		}else if (score == game.score1){
-			if(numErrors < game.errors1){
-				//winner
-				game.winner = client;
-			}else if(numErrors > errors1){
-				//loser
-				if(client == game.client){
-					game.winner = game.host;
-				}else{
-					game.winner = game.client;
-				}
-			}else{
-				//tie
-				game.winner = "tie";
-			}
+	if(game.client == client){
+		game.client_score = score;
+		game.client_errors = numErrors;
+	}else if(game.host == client){
+		game.host_score = score;
+		game.host_errors = numErrors;
+	}
+
+	if(game.client_score != null && game.host_score != null){
+		//determine a winner
+		if(game.client_score > game.host_score){
+			game.winner = game.client;
+		}else if(game.host_score > game.client_score){
+			game.winner = game.host;
 		}else{
-			//loser
-			if(client == game.client){
+			//scores are tied
+			if(game.client_errors < game.host_errors){
+				game.winner = game.client;
+			}else if(game.host_errors < game.client_errors){
 				game.winner = game.host;
 			}else{
-				game.winner = game.client;
+				//an actual tie
+				game.winner = "tie";
 			}
 		}
-		res.send("No error");
-	}else{
-		//more than two scores have been posted
-		console.log("Error: More than two hangman scores posted");
-		res.send("Error");
 	}
 
 	console.log(game);
