@@ -279,18 +279,6 @@ app.get("/hangman_host/:host", function (req, res) {
 	console.log(hangman_games);
 });
 
-app.get("/hangman_words_list/:host", function (req, res) {
-	var host = req.params.host;
-	if (host in hangman_games) {	
-		var game = hangman_games[host];
-		res.send(game.words);
-	}
-	else {
-		console.log("Error: host not found");
-		res.send("Error: host not found")
-	}
-});
-
 app.get("/hangman_join/:host/:client", function (req, res) {
 	var host = req.params.host;
 	var client = req.params.client;
@@ -308,7 +296,7 @@ app.get("/hangman_join/:host/:client", function (req, res) {
 	}
 });
 
-app.get("/hangman_done/:host/:client/:score/:numErrors", function(req, res) {
+app.post("/hangman_done/:host/:client/:score/:numErrors", function(req, res) {
 	var host = req.params.host;
 	var client = req.params.client;
 	var score = req.params.score;

@@ -23,7 +23,6 @@ public class LetterAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-
 		return letters.length;
 	}
 

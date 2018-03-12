@@ -24,6 +24,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,22 +33,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static app.a3_in_1_game.Hangman.currentWord;
 
 public class Hangman_Activity extends AppCompatActivity {
-    private static int MAX_WORD_SIZE = 50;
     private static int MAX_NUM_WORDS_MULTIPLAYER = 20;
     private static long startTime; //stores the start time for multiplayer timing
     private static int numWordsGuessed = 0;                          //score for multiplayer games
     private static int totalNumWrongGuesses = 0;                     //tiebreaker for multiplayer
     public InputStream inputStream;
     public String[] wordsList = new String[MAX_NUM_WORDS_MULTIPLAYER];
-    public boolean multiplayer = MySingleton.tic_tac_toe_multiplayer;
+    public boolean multiplayer = MySingleton.hangman_multiplayer;
     int score = 0;
     RequestQueue requestQueue;
-    private String[] words;
-    private Random rand;
+    int indexInWordsList = 0; //count of where we are in the words list
     private String currWord = "";
     private LinearLayout wordLayout;
     private TextView[] charViews;
@@ -58,8 +59,6 @@ public class Hangman_Activity extends AppCompatActivity {
     private int numParts = 6;
     //current part - will increment when wrong answers are chosen
     private int currPart;
-    //number of characters in current word
-    private int numChars;
     //number correctly guessed
     private int numCorr;
     private LetterAdapter ltrAdapt;
@@ -68,26 +67,17 @@ public class Hangman_Activity extends AppCompatActivity {
     private String url = MySingleton.url;
     private Context context;
     private boolean run;
-    private String host = MySingleton.tic_tac_toe_host;
+    private String host = MySingleton.hangman_host;
     private String user;
     private int numErrors;
     private TextView textView;
     private SharedPreferences sharedPref;
-
-    public Hangman_Activity() throws IOException {
-    }
-
-    public static double getElapsedTime() {
-        long now = System.currentTimeMillis();
-        return (now - startTime) / 1000.0;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hangman_);
         Resources res = getResources();
-        words = res.getStringArray(R.array.words);
 
         sharedPref = getSharedPreferences("myPref", Context.MODE_PRIVATE);
         user = sharedPref.getString("user", "");
@@ -110,8 +100,12 @@ public class Hangman_Activity extends AppCompatActivity {
         }
 
         context = this;
-        playGame();
-
+        if (!multiplayer) {
+            playGame();
+        } else {
+            run = true;
+            getWordsList();
+        }
     }
 
     protected void update() {
@@ -132,7 +126,64 @@ public class Hangman_Activity extends AppCompatActivity {
                                             ((Hangman_Activity) context).runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
+                                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
                                                     //display who won
+                                                    if (winner.equals(user)) {
+                                                        // Display Alert Dialog
+                                                        builder.setTitle("You Win!");
+                                                        builder.setMessage("\nYour score increased to " + ++score + "\nThe answer was: " + currWord + "\n");
+                                                        builder.setPositiveButton("Play Again",
+                                                                new DialogInterface.OnClickListener() {
+                                                                    public void onClick(DialogInterface dialog, int id) {
+                                                                        Hangman_Activity.this.playGame();
+                                                                    }
+                                                                });
+                                                        String message = "Score: " + score;
+                                                        textView.setText(message);
+                                                        builder.setNegativeButton("Exit",
+                                                                new DialogInterface.OnClickListener() {
+                                                                    public void onClick(DialogInterface dialog, int id) {
+                                                                        Hangman_Activity.this.finish();
+                                                                    }
+                                                                });
+                                                    } else if (winner.equals("tie")) {
+                                                        // Display Alert Dialog
+                                                        builder.setTitle("You Win!");
+                                                        builder.setMessage("\nYour score increased to " + ++score + "\nThe answer was: " + currWord + "\n");
+                                                        builder.setPositiveButton("Play Again",
+                                                                new DialogInterface.OnClickListener() {
+                                                                    public void onClick(DialogInterface dialog, int id) {
+                                                                        Hangman_Activity.this.playGame();
+                                                                    }
+                                                                });
+                                                        String message = "Score: " + score;
+                                                        textView.setText(message);
+                                                        builder.setNegativeButton("Exit",
+                                                                new DialogInterface.OnClickListener() {
+                                                                    public void onClick(DialogInterface dialog, int id) {
+                                                                        Hangman_Activity.this.finish();
+                                                                    }
+                                                                });
+                                                    } else {
+                                                        // Display Alert Dialog
+                                                        builder.setTitle("You lose!");
+                                                        builder.setMessage("Score decreased to " + --score + "\nThe answer was: " + currWord + "\n");
+                                                        builder.setPositiveButton("Play Again",
+                                                                new DialogInterface.OnClickListener() {
+                                                                    public void onClick(DialogInterface dialog, int id) {
+                                                                        Hangman_Activity.this.playGame();
+                                                                    }
+                                                                });
+                                                        String message = "Score: " + score;
+                                                        textView.setText(message);
+                                                        builder.setNegativeButton("Exit",
+                                                                new DialogInterface.OnClickListener() {
+                                                                    public void onClick(DialogInterface dialog, int id) {
+                                                                        Hangman_Activity.this.finish();
+                                                                    }
+                                                                });
+                                                    }
+                                                    builder.show();
                                                 }
                                             });
                                         }
@@ -143,7 +194,9 @@ public class Hangman_Activity extends AppCompatActivity {
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context,
+                                            "(update) " + error.toString(),
+                                            Toast.LENGTH_SHORT).show();
                                 }
                             });
                     jsonObjectRequest.setTag(this);
@@ -175,7 +228,8 @@ public class Hangman_Activity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,
+                        "(post) " + error.toString(), Toast.LENGTH_SHORT).show();
             }
         });
         stringRequest.setTag(this);
@@ -183,7 +237,7 @@ public class Hangman_Activity extends AppCompatActivity {
     }
 
     protected void getWordsList() {
-        String req = url + "/hangman_words_list/" + host;
+        String req = url + "/hangman/" + host + "/" + user;
         System.err.println(req);
         JsonObjectRequest jsonObjectRequest =
                 new JsonObjectRequest(Request.Method.GET, req, null, new Response.Listener<JSONObject>() {
@@ -191,7 +245,24 @@ public class Hangman_Activity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             System.err.println("RESPONSE: " + response.toString());
-                            wordsList = (String[]) response.get("words");
+                            JSONArray words = response.getJSONArray("words");
+                            for (int i = 0; i < words.length(); i++) {
+                                wordsList[i] = words.getString(i);
+                            }
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    (Hangman_Activity.this).runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            disableBtns();
+                                        }
+                                    });
+                                    post(numWordsGuessed, totalNumWrongGuesses);
+                                }
+                            }, 60000);
+
+                            playGame();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -210,29 +281,22 @@ public class Hangman_Activity extends AppCompatActivity {
         inputStream = getAssets().open("HangmanWordList.txt");
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         int numLinesInFile = 0;
-        String line;
 
-
-        while ((line = bufferedReader.readLine()) != null) {
+        while (bufferedReader.readLine() != null) {
             numLinesInFile++;
         }
 
-
         //start the buffer back out at the top of the file
-
         inputStream = getAssets().open("HangmanWordList.txt");
         bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
 
         //extracts a random line as the word
         Random r = new Random();
         int randomLine = r.nextInt(numLinesInFile);
         String trmp = "";
         for (int i = 0; i < randomLine; i++) {
-
             trmp = bufferedReader.readLine();
         }
-
 
         currentWord = trmp.toCharArray();
         String text = String.valueOf(currentWord);
@@ -262,56 +326,42 @@ public class Hangman_Activity extends AppCompatActivity {
                 charViews[c].setBackgroundResource(R.drawable.letter_bg);
                 //add to layout
                 wordLayout.addView(charViews[c]);
-
             }
             ltrAdapt = new LetterAdapter(this);
             letters.setAdapter(ltrAdapt);
             for (int p = 0; p < numParts; p++) {
                 bodyParts[p].setVisibility(View.INVISIBLE);
             }
-
         } else {
             //multiplayer
-            int ROUND_TIME_SECS = 15; //2 minutes
-            getWordsList(); //populates global var wordsList
-            startTime = System.currentTimeMillis();
+            currPart = 0;
+            numCorr = 0;
+            charViews = new TextView[wordsList[indexInWordsList].length()];
+            wordLayout.removeAllViews();
+            //do currWord = ... here
+            currWord = wordsList[indexInWordsList];
+            //noinspection UnusedAssignment
+            indexInWordsList++;
 
-            int indexInWordsList = 0; //count of where we are in the words list
-
-            while (getElapsedTime() < ROUND_TIME_SECS) {
-                //update a text field with the remainder of the time:
-                //ROUND_TIME_SECS - getElapsedTime());
-                currPart = 0;
-                numCorr = 0;
-                while (wordsList[0] == null) {
-                } //wait until request works
-                charViews = new TextView[wordsList[indexInWordsList++].length()];
-                wordLayout.removeAllViews();
-                //do currWord = ... here
-                for (int c = 0; c < currWord.length(); c++) {
-                    charViews[c] = new TextView(this);
-                    charViews[c].setText("" + currWord.charAt(c));
-
-                    charViews[c].setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                    charViews[c].setGravity(Gravity.CENTER);
-                    charViews[c].setTextColor(Color.WHITE);
-                    charViews[c].setBackgroundResource(R.drawable.letter_bg);
-                    //add to layout
-                    wordLayout.addView(charViews[c]);
-                }
-                ltrAdapt = new LetterAdapter(this);
-                letters.setAdapter(ltrAdapt);
-                for (int p = 0; p < numParts; p++) {
-                    bodyParts[p].setVisibility(View.INVISIBLE);
-                }
+            for (int c = 0; c < currWord.length(); c++) {
+                charViews[c] = new TextView(this);
+                charViews[c].setText("" + currWord.charAt(c));
+                charViews[c].setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                charViews[c].setGravity(Gravity.CENTER);
+                charViews[c].setTextColor(Color.WHITE);
+                charViews[c].setBackgroundResource(R.drawable.letter_bg);
+                //add to layout
+                wordLayout.addView(charViews[c]);
             }
-            //timer is done
-            post(numWordsGuessed, totalNumWrongGuesses); //tell the server how you did
+            ltrAdapt = new LetterAdapter(this);
+            letters.setAdapter(ltrAdapt);
+            for (int p = 0; p < numParts; p++) {
+                bodyParts[p].setVisibility(View.INVISIBLE);
+            }
         }
     }
 
     public void letterPressed(View view) {
-
         String ltr = (((TextView) view).getText().toString()).toLowerCase();
         char letterChar = ltr.charAt(0);
         view.setEnabled(false);
@@ -356,10 +406,6 @@ public class Hangman_Activity extends AppCompatActivity {
                     //multiplayer
                     //user got a word
                     numWordsGuessed++;
-                    //TODO: reset UI to display the next word
-                    for (int p = 0; p < numParts; p++) {
-                        bodyParts[p].setVisibility(View.INVISIBLE);//use this to show body parts
-                    }
                     playGame();
                 }
             }
@@ -371,7 +417,6 @@ public class Hangman_Activity extends AppCompatActivity {
                 totalNumWrongGuesses++;
             }
         } else {
-
             if (!multiplayer) {
                 //user has lost
                 disableBtns();
@@ -398,16 +443,9 @@ public class Hangman_Activity extends AppCompatActivity {
             } else {
                 //multiplayer
                 //user has lost
-
-                //TODO: reset UI to display the next word
-                for (int p = 0; p < numParts; p++) {
-                    bodyParts[p].setVisibility(View.INVISIBLE);//use this to show body parts
-                }
                 playGame();
             }
-
         }
-
     }
 
     public void disableBtns() {
