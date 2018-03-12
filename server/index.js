@@ -1,5 +1,6 @@
 //var mysql = require("mysql");
 var express = require("express");
+var ip = require("ip");
 var app = express();
 var port = process.env.PORT || 8080;
 
@@ -211,10 +212,22 @@ app.get("/hangman_host/:host", function (req, res) {
 	res.send("Game created!");
 	game = {
 		host: host,
-		game.words = getWords()
+		words: getWords()
 		};
-	connect_4_games[host] = game;
-	console.log(connect_4_games);
+	hangman_games[host] = game;
+	console.log(hangman_games);
+});
+
+app.get("/hangman_words_list/:host", function (req, res) {
+	var host = req.params.host;
+	if (host in hangman_games) {	
+		var game = hangman_games[host];
+		res.send(game.words);
+	}
+	else {
+		console.log("Error: host not found");
+		res.send("Error: host not found")
+	}
 });
 
 app.get("/hangman_join/:host/:client", function (req, res) {
@@ -234,16 +247,57 @@ app.get("/hangman_join/:host/:client", function (req, res) {
 	}
 });
 
-app.post("/hangman_done/:host/:client/:score/:numErrors", function(req, res) {
+app.get("/hangman_done/:host/:client/:score/:numErrors", function(req, res) {
 	var host = req.params.host;
 	var client = req.params.client;
 	var score = req.params.score;
 	var numErrors = req.params.numErrors;
 
 	//determine winner
-}
+	var game = hangman_games[host];
+	if(game.score1 == null){
+		game.score1 = score;
+		game.errors1 = numErrors;
+		res.send("No error");
+	}else if(game.score2 == null){
+		if(score > game.score1){
+			//winner
+			game.winner = client;
+		}else if (score == game.score1){
+			if(numErrors < game.errors1){
+				//winner
+				game.winner = client;
+			}else if(numErrors > errors1){
+				//loser
+				if(client == game.client){
+					game.winner = game.host;
+				}else{
+					game.winner = game.client;
+				}
+			}else{
+				//tie
+				game.winner = "tie";
+			}
+		}else{
+			//loser
+			if(client == game.client){
+				game.winner = game.host;
+			}else{
+				game.winner = game.client;
+			}
+		}
+		res.send("No error");
+	}else{
+		//more than two scores have been posted
+		console.log("Error: More than two hangman scores posted");
+		res.send("Error");
+	}
+
+	console.log(game);
+});
 
 //called at the end of the game until there is a winner
+//returns a refreshed game object
 app.get("/hangman/:host/:user", function (req, res) {
 	console.log("GET:");
 	console.log(req.originalUrl);
@@ -269,9 +323,134 @@ app.get("/hangman/:host/:user", function (req, res) {
 
 function getWords(){
 	//grab random words
-	var wordsList = ["moist", "monkey"];
-	//randomize word list and grab top 20 or so
-	return wordsList;
+	var wordsList = ["acres",
+"adult",
+"advice",
+"arrangement",
+"attempt",
+"august",
+"autumn",
+"border",
+"breeze",
+"brick",
+"calm",
+"canal",
+"casey",
+"cast",
+"chose",
+"claws",
+"coach",
+"constantly",
+"contrast",
+"cookies",
+"customs",
+"damage",
+"danny",
+"deeply",
+"depth",
+"discussion",
+"doll",
+"donkey",
+"egypt",
+"ellen",
+"essential",
+"exchange",
+"exist",
+"explanation",
+"facing",
+"film",
+"finest",
+"fireplace",
+"floating",
+"folks",
+"fort",
+"garage",
+"grabbed",
+"grandmother",
+"habit",
+"happily",
+"harry",
+"heading",
+"hunter",
+"illinois",
+"image",
+"independent",
+"instant",
+"january",
+"kids",
+"label",
+"lee",
+"lungs",
+"manufacturing",
+"martin",
+"mathematics",
+"melted",
+"memory",
+"mill",
+"mission",
+"monkey",
+"mount",
+"mysterious",
+"neighborhood",
+"norway",
+"nuts",
+"occasionally",
+"official",
+"ourselves",
+"palace",
+"pennsylvania",
+"philadelphia",
+"plates",
+"poetry",
+"policeman",
+"positive",
+"possibly",
+"practical",
+"pride",
+"promised",
+"recall",
+"relationship",
+"remarkable",
+"require",
+"rhyme",
+"rocky",
+"rubbed",
+"rush",
+"sale",
+"satellites",
+"satisfied",
+"scared",
+"selection",
+"shake",
+"shaking",
+"shallow",
+"shout",
+"silly",
+"simplest",
+"slight",
+"slip",
+"slope",
+"soap",
+"solar",
+"species",
+"spin",
+"stiff",
+"swung",
+"tales",
+"thumb",
+"tobacco",
+"toy",
+"trap",
+"treated",
+"tune",
+"university",
+"vapor",
+"vessels",
+"wealth",
+"wolf",
+"zoo"]
+	wordsList.sort( function() { return 0.5 - Math.random() } );
+	return wordsList.slice(0, 20); //grab top 20 elements
 }
 
 
@@ -279,5 +458,5 @@ function getWords(){
 app.set("port", port);
 
 app.listen(app.get("port"), function () {
-  console.log("3_in_1_server listening on port " + port + "!")
+  console.log("3_in_1_server listening on port " + ip.address() + ":" + port + "!")
 })

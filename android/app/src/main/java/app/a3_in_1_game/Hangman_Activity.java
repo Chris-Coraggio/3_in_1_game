@@ -71,9 +71,19 @@ public class Hangman_Activity extends AppCompatActivity {
     private String url = MySingleton.url;
     private Context context;
     private boolean run;
-    private String host = MySingleton.connect_4_host;
-    private String user;
+    private String host = "Chris"; //TODO change this in main activity later
+    private String user = "chris"; //TODO change this in main activity later
     private int numErrors;
+
+    private boolean multiplayer = true; //TODO change this in main activity later
+    private static int MAX_WORD_SIZE = 50;
+    private static int MAX_NUM_WORDS_MULTIPLAYER = 20;
+    public String[] wordsList = new String[MAX_NUM_WORDS_MULTIPLAYER];
+
+    private static long startTime; //stores the start time for multiplayer timing
+    private static int numWordsGuessed = 0;                          //score for multiplayer games
+    private static int totalNumWrongGuesses = 0;                     //tiebreaker for multiplayer
+
 
 
     public Hangman_Activity() throws IOException {
@@ -103,6 +113,7 @@ public class Hangman_Activity extends AppCompatActivity {
             bodyParts[p].setVisibility(View.INVISIBLE);//use this to show body parts
         }
 
+        context = this;
         playGame();
 
     }
@@ -153,8 +164,8 @@ public class Hangman_Activity extends AppCompatActivity {
         thread.start();
     }
 
-    protected void post(int col) {
-        String req = url + "/hangman/" + host + "/" + user + "/" + score + "/" + numErrors;
+    protected void post(int score, int numErrors) {
+        String req = url + "/hangman_done/" + host + "/" + user + "/" + score + "/" + numErrors;
         System.err.println(req);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, req,
                 new Response.Listener<String>() {
@@ -175,6 +186,30 @@ public class Hangman_Activity extends AppCompatActivity {
         stringRequest.setTag(this);
         MySingleton.getInstance(context).addToRequestQueue(stringRequest);
     }
+
+    protected void getWordsList(){
+        String req = url + "/hangman_words_list/" + host;
+        System.err.println(req);
+        JsonObjectRequest jsonObjectRequest =
+                new JsonObjectRequest(Request.Method.GET, req, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            System.err.println("RESPONSE: " + response.toString());
+                            wordsList = (String [])response.get("words");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+        jsonObjectRequest.setTag(this);
+        MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
+}
 
 
     public void getRandomWord() throws IOException {
@@ -213,7 +248,7 @@ public class Hangman_Activity extends AppCompatActivity {
 
 
     public void playGame() {
-
+    if(!multiplayer) {
         try {
             getRandomWord();
         } catch (IOException e) {
@@ -242,7 +277,48 @@ public class Hangman_Activity extends AppCompatActivity {
             bodyParts[p].setVisibility(View.INVISIBLE);
         }
 
+    }else{
+        //multiplayer
+        int ROUND_TIME_SECS = 120; //2 minutes
+        getWordsList(); //populates global var wordsList
+        startTime = System.currentTimeMillis();
 
+        int indexInWordsList = 0; //count of where we are in the words list
+
+        while (getElapsedTime() < ROUND_TIME_SECS) {
+            //update a text field with the remainder of the time:
+            //ROUND_TIME_SECS - getElapsedTime());
+            currPart = 0;
+            numCorr = 0;
+            while(wordsList[0] == null){} //wait until request works
+            charViews = new TextView[wordsList[indexInWordsList++].length()];
+            wordLayout.removeAllViews();
+            //do currWord = ... here
+            for (int c = 0; c < currWord.length(); c++) {
+                charViews[c] = new TextView(this);
+                charViews[c].setText("" + currWord.charAt(c));
+
+                charViews[c].setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                charViews[c].setGravity(Gravity.CENTER);
+                charViews[c].setTextColor(Color.WHITE);
+                charViews[c].setBackgroundResource(R.drawable.letter_bg);
+                //add to layout
+                wordLayout.addView(charViews[c]);
+            }
+            ltrAdapt = new LetterAdapter(this);
+            letters.setAdapter(ltrAdapt);
+            for (int p = 0; p < numParts; p++) {
+                bodyParts[p].setVisibility(View.INVISIBLE);
+            }
+        }
+        //timer is done
+        post(numWordsGuessed, totalNumWrongGuesses); //tell the server how you did
+    }
+    }
+
+    public static double getElapsedTime() {
+        long now = System.currentTimeMillis();
+        return (now - startTime) / 1000.0;
     }
 
     public void letterPressed(View view) {
@@ -262,15 +338,60 @@ public class Hangman_Activity extends AppCompatActivity {
         if (guessedRight == true) {
             if (numCorr == currWord.length()) {
                 //user has won
-                // Disable Buttons
+                if(!multiplayer) {
+                    // Disable Buttons
+                    disableBtns();
+
+                    // Display Alert Dialog
+                    AlertDialog.Builder winBuild = new AlertDialog.Builder(this);
+
+                    winBuild.setTitle("You Win!");
+                    winBuild.setMessage("\nYour score increased to " + ++score + "\nThe answer was: " + currWord + "\n");
+                    winBuild.setPositiveButton("Play Again",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    Hangman_Activity.this.playGame();
+                                }
+                            });
+                    String message = "Score: " + score;
+                    textView.setText(message);
+                    winBuild.setNegativeButton("Exit",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    Hangman_Activity.this.finish();
+                                }
+                            });
+
+                    winBuild.show();
+                }else{
+                    //multiplayer
+                    //user got a word
+                    numWordsGuessed++;
+                    //TODO: reset UI to display the next word
+                    for (int p = 0; p < numParts; p++) {
+                        bodyParts[p].setVisibility(View.INVISIBLE);//use this to show body parts
+                    }
+                    playGame();
+                }
+            }
+        } else if (currPart < numParts) {
+            //some guesses left
+            bodyParts[currPart].setVisibility(View.VISIBLE);
+            currPart++;
+            if(multiplayer){
+                totalNumWrongGuesses++;
+            }
+        } else {
+
+            if(!multiplayer) {
+                //user has lost
                 disableBtns();
 
                 // Display Alert Dialog
-                AlertDialog.Builder winBuild = new AlertDialog.Builder(this);
-
-                winBuild.setTitle("You Win!");
-                winBuild.setMessage("\nYour score increased to " + ++score + "\nThe answer was: " + currWord + "\n");
-                winBuild.setPositiveButton("Play Again",
+                AlertDialog.Builder loseBuild = new AlertDialog.Builder(this);
+                loseBuild.setTitle("You lose!");
+                loseBuild.setMessage("Score decreased to " + --score + "\nThe answer was: " + currWord + "\n");
+                loseBuild.setPositiveButton("Play Again",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Hangman_Activity.this.playGame();
@@ -278,43 +399,23 @@ public class Hangman_Activity extends AppCompatActivity {
                         });
                 String message = "Score: " + score;
                 textView.setText(message);
-                winBuild.setNegativeButton("Exit",
+                loseBuild.setNegativeButton("Exit",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Hangman_Activity.this.finish();
                             }
                         });
+                loseBuild.show();
+            }else{
+                //multiplayer
+                //user has lost
 
-                winBuild.show();
+                //TODO: reset UI to display the next word
+                for (int p = 0; p < numParts; p++) {
+                    bodyParts[p].setVisibility(View.INVISIBLE);//use this to show body parts
+                }
+                playGame();
             }
-        } else if (currPart < numParts) {
-            //some guesses left
-            bodyParts[currPart].setVisibility(View.VISIBLE);
-            currPart++;
-        } else {
-            //user has lost
-            disableBtns();
-
-            // Display Alert Dialog
-            AlertDialog.Builder loseBuild = new AlertDialog.Builder(this);
-            loseBuild.setTitle("You lose!");
-            loseBuild.setMessage("Score decreased to " + --score + "\nThe answer was: " + currWord + "\n");
-            loseBuild.setPositiveButton("Play Again",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            Hangman_Activity.this.playGame();
-                        }
-                    });
-            String message = "Score: " + score;
-            textView.setText(message);
-            loseBuild.setNegativeButton("Exit",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            Hangman_Activity.this.finish();
-                        }
-                    });
-
-            loseBuild.show();
 
         }
 
