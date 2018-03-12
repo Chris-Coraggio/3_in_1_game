@@ -357,19 +357,21 @@ public class MainActivity extends AppCompatActivity {
         tic_tac_toe_launch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                SharedPreferences.Editor editor = sharedPref.edit();
                 old_user[0] = user[0];
                 user[0] = nameText.getText().toString();
-                editor.putString("user", user[0]);
-                editor.commit();
-                if (user[0].length() < 3 || user[0].length() > 14){
+                if (user[0].length() < 4 || user[0].length() > 14){
                     Toast.makeText(getApplicationContext(), "Username must be between 4 and 15 characters long!", Toast.LENGTH_SHORT).show();
+                    nameText.setText(old_user[0]);
+                    user[0] = old_user[0];
                     return;
                 }
-                else if (isValid(user[0].toUpperCase()) == false && isAlpha(user[0]) == false){
+                else if (!isValid(user[0].toUpperCase()) && !isAlpha(user[0])){
                     Toast.makeText(getApplicationContext(), "Username must be only letters and numbers!", Toast.LENGTH_SHORT).show();
+                    nameText.setText(old_user[0]);
+                    user[0] = old_user[0];
                     return;
                 }
+
                 run[0] = false;
                 if (old_user[0].equals(user[0])) {
                     if (!unique) {
@@ -389,19 +391,24 @@ public class MainActivity extends AppCompatActivity {
         connect_4_launch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                SharedPreferences.Editor editor = sharedPref.edit();
                 old_user[0] = user[0];
                 user[0] = nameText.getText().toString();
+                if (user[0].length() < 4 || user[0].length() > 14){
+                    Toast.makeText(getApplicationContext(), "Username must be between 4 and 15 characters long!", Toast.LENGTH_SHORT).show();
+                    nameText.setText(old_user[0]);
+                    user[0] = old_user[0];
+                    return;
+                }
+                else if (!isValid(user[0].toUpperCase()) && !isAlpha(user[0])){
+                    Toast.makeText(getApplicationContext(), "Username must be only letters and numbers!", Toast.LENGTH_SHORT).show();
+                    nameText.setText(old_user[0]);
+                    user[0] = old_user[0];
+                    return;
+                }
+
+                SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString("user", user[0]);
                 editor.commit();
-                if (user[0].length() < 3 || user[0].length() > 14){
-                    Toast.makeText(getApplicationContext(), "Username must be between 4 and 15 characters long!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                else if (isValid(user[0].toUpperCase()) == false && isAlpha(user[0]) == false){
-                    Toast.makeText(getApplicationContext(), "Username must be only letters and numbers!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
 
                 run[0] = false;
                 if (old_user[0].equals(user[0])) {
