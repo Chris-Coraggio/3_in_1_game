@@ -270,9 +270,10 @@ app.get("/hangman_host/:host", function (req, res) {
 	if (host in hangman_games) {
 		delete hangman_games[host];
 	}
+	var words = getWords();
 	game = {
 		host: host,
-		words: getWords()
+		words: words
 		};
 	hangman_games[host] = game;
 	console.log(hangman_games);
