@@ -246,9 +246,15 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                     }
                     text = "Forfeit";
                     button.setText(text);
+                    if (multiplayer) {
+                        button.setVisibility(View.GONE);
+                    }
                 }
             }
         });
+        if (multiplayer) {
+            button.setVisibility(View.GONE);
+        }
     }
 
     private void setBoard() {
@@ -295,6 +301,9 @@ public class Connect_4_Acitivity extends AppCompatActivity {
         inProgress = false;
         text = "Restart";
         button.setText(text);
+        if (multiplayer) {
+            button.setVisibility(View.VISIBLE);
+        }
 
         String winner;
         if (currentPlayer == connect_4.CROSS) {
