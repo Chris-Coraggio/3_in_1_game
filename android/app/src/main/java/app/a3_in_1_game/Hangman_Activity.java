@@ -454,4 +454,21 @@ public class Hangman_Activity extends AppCompatActivity {
             letters.getChildAt(l).setEnabled(false);
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (multiplayer) {
+            run = true;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (multiplayer) {
+            run = false;
+            thread.interrupt();
+        }
+    }
 }

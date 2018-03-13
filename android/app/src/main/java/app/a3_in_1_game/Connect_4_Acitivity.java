@@ -46,6 +46,37 @@ public class Connect_4_Acitivity extends AppCompatActivity {
     private int setCol = -1;
     private boolean run;
 
+    protected void restartState() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String req = url + "/connect_4_restart/" + host + "/" + user;
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, req,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                if (response.equals("State set to RESTART!") ||
+                                        response.equals("State removed!")) {
+                                    run = true;
+                                    update();
+                                } else {
+                                    Toast.makeText(context, "ERROR", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, "(restartState) " + error.toString(),
+                                Toast.LENGTH_SHORT).show();
+                        System.err.println("(restartState) " + error.toString());
+                    }
+                });
+                stringRequest.setTag(this);
+                MySingleton.getInstance(context).addToRequestQueue(stringRequest);
+            }
+        }).start();
+    }
+
     protected void update() {
         thread = new Thread(new Runnable() {
             @Override
@@ -60,6 +91,38 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                                     try {
                                         System.err.println("RESPONSE: " + response.toString());
                                         if (myTurn) {
+                                            return;
+                                        }
+                                        String state;
+                                        try {
+                                            state = response.getString("state");
+                                        } catch (JSONException e) {
+                                            state = null;
+                                        }
+                                        if (!inProgress && state == null) {
+                                            run = false;
+                                            (Connect_4_Acitivity.this).runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    reset();
+                                                    restartState();
+                                                }
+                                            });
+                                            return;
+                                        } else if (!inProgress && state.equals("RESTART")) {
+                                            run = false;
+                                            // 2nd player to hit restart
+                                            (Connect_4_Acitivity.this).runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    reset();
+                                                    restartState();
+                                                }
+                                            });
+                                            return;
+                                        } else if (inProgress && state != null
+                                                && state.equals("RESTART")) {
+                                            // 1st player is waiting for 2nd player to hit restart
                                             return;
                                         }
                                         myTurn = Objects.equals(response.getString("turn"), user);
@@ -82,13 +145,14 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "(update) " + error.toString(),
+                                            Toast.LENGTH_SHORT).show();
                                 }
                             });
                     jsonObjectRequest.setTag(this);
                     MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -144,15 +208,13 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                     case MotionEvent.ACTION_POINTER_UP:
                     case MotionEvent.ACTION_UP: {
                         int col = getCol(motionEvent.getX());
-                        if (col != -1 && multiplayer && myTurn) {
+                        if (col != -1 && multiplayer && myTurn && inProgress) {
                             myTurn = false;
                             drop(col, connect_4.CROSS);
                             post(col);
-                        } else if (col != -1 && !multiplayer) {
+                        } else if (col != -1 && !multiplayer & inProgress) {
                             drop(col, connect_4.CROSS);
-                            if (inProgress && !multiplayer) {
-                                drop(-1, connect_4.CIRCLE);
-                            }
+                            drop(-1, connect_4.CIRCLE);
                         }
                     }
                 }
@@ -167,12 +229,21 @@ public class Connect_4_Acitivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (inProgress) {
+                    // Game in progress
                     score--;
                     text = "Score: " + score;
                     scoreText.setText(text);
                     reset();
+                    // TODO FORFEIT IN MULTIPLAYER???
                 } else {
-                    reset();
+                    // Game ended
+                    if (!multiplayer) {
+                        reset();
+                    } else {
+                        run = true;
+                        myTurn = false;
+                        update();
+                    }
                     text = "Forfeit";
                     button.setText(text);
                 }
@@ -282,8 +353,6 @@ public class Connect_4_Acitivity extends AppCompatActivity {
             myTurn = false;
             run = true;
             update();
-        } else {
-            myTurn = true;
         }
     }
 

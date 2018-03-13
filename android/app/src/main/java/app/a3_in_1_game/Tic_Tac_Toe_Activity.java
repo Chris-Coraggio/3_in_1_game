@@ -63,7 +63,6 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                                                 (Tic_Tac_Toe_Activity.this).runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        //drop(setCol, connect_4.CIRCLE);
                                                         updateBoard(setRow, setCol);
                                                         t.spacesOccupied++;
                                                         if (t.gameOver()) {
