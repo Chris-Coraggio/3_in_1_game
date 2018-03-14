@@ -54,6 +54,24 @@ public class Connect_4Test {
             {' ', ' ', ' ',' ', 'X', 'X', 'X'},
     };
 
+    private static final char[][] horizontal3Top = {
+            {' ', ' ', ' ',' ', 'X', 'X', 'X'},
+            {' ', ' ', ' ',' ', ' ', ' ', ' '},
+            {' ', ' ', ' ',' ', ' ', ' ', ' '},
+            {' ', ' ', ' ',' ', ' ', ' ', ' '},
+            {' ', ' ', ' ',' ', ' ', 'O', 'O'},
+            {' ', ' ', ' ',' ', 'O', 'X', 'X'},
+    };
+
+    private static final char[][] horizontal3LeftTop = {
+            {' ', ' ', ' ',' ', 'X', 'X', 'X'},
+            {' ', ' ', ' ',' ', ' ', ' ', ' '},
+            {' ', ' ', ' ',' ', ' ', ' ', ' '},
+            {' ', ' ', ' ',' ', ' ', ' ', ' '},
+            {' ', ' ', ' ',' ', ' ', 'O', 'O'},
+            {' ', ' ', ' ',' ', 'O', 'X', 'X'},
+    };
+
     private static final char[][] vertical3Right = {
             {' ', ' ', ' ', ' ', ' ', ' ', ' '},
             {' ', ' ', ' ', ' ', ' ', ' ', ' '},
@@ -61,6 +79,15 @@ public class Connect_4Test {
             {' ', ' ', ' ', ' ', ' ', ' ', 'X'},
             {' ', ' ', ' ', ' ', ' ', ' ', 'X'},
             {' ', ' ', ' ', ' ', ' ', ' ', 'X'},
+    };
+
+    private static final char[][] vertical3Top = {
+            {' ', ' ', ' ', ' ', ' ', ' ', ' '},
+            {' ', ' ', ' ', ' ', ' ', ' ', 'X'},
+            {' ', ' ', ' ', ' ', ' ', ' ', 'X'},
+            {' ', ' ', ' ', ' ', ' ', ' ', 'X'},
+            {' ', ' ', ' ', ' ', ' ', ' ', 'O'},
+            {' ', ' ', ' ', ' ', ' ', ' ', 'O'},
     };
 
     private static final char[][] vertical3Left = {
@@ -90,6 +117,24 @@ public class Connect_4Test {
             {' ', ' ', ' ','X', ' ', ' ', ' '},
     };
 
+    private static final char[][] diagonal3RightTop = {
+            {' ', ' ', ' ',' ', ' ', ' ', ' '},
+            {' ', ' ', ' ',' ', ' ', 'X', ' '},
+            {' ', ' ', ' ',' ', 'X', ' ', ' '},
+            {' ', ' ', ' ','X', ' ', 'X', ' '},
+            {' ', ' ', ' ',' ', 'X', ' ', ' '},
+            {' ', ' ', ' ','O', ' ', ' ', ' '},
+    };
+
+    private static final char[][] diagonal3TopDown = {
+            {' ', ' ', ' ',' ', ' ', ' ', 'X'},
+            {' ', ' ', ' ',' ', ' ', 'X', ' '},
+            {' ', ' ', ' ',' ', 'X', ' ', ' '},
+            {' ', ' ', ' ',' ', ' ', 'X', ' '},
+            {' ', ' ', ' ',' ', 'X', ' ', ' '},
+            {' ', ' ', ' ','O', ' ', ' ', ' '},
+    };
+
     private static final char[][] inverseDiagonal3LeftCorner = {
             {' ', ' ', ' ',' ', ' ', ' ', ' '},
             {' ', ' ', ' ',' ', ' ', ' ', ' '},
@@ -101,11 +146,20 @@ public class Connect_4Test {
 
     private static final char[][] inverseDiagonal3RightCorner = {
             {' ', ' ', ' ',' ', ' ', ' ', ' '},
-            {' ', ' ', ' ',' ', ' ', ' ', ' '},
+            {' ', ' ', 'O',' ', ' ', ' ', ' '},
             {' ', ' ', ' ','X', ' ', ' ', ' '},
             {' ', ' ', ' ',' ', 'X', ' ', ' '},
             {' ', ' ', ' ',' ', ' ', 'X', ' '},
             {' ', ' ', ' ',' ', ' ', ' ', ' '},
+    };
+
+    private static final char[][] inverseDiagonal3BottomTop = {
+            {' ', ' ', ' ' ,' ', ' ', ' ', ' '},
+            {' ', ' ', ' ' ,' ', ' ', ' ', ' '},
+            {' ', ' ', ' ' ,' ', ' ', ' ', ' '},
+            {' ', ' ', ' ' ,' ', 'X', ' ', ' '},
+            {' ', ' ', ' ' ,' ', ' ', 'X', ' '},
+            {' ', ' ', ' ' ,' ', ' ', ' ', 'X'},
     };
 
     /* Boards for checkWinner */
@@ -206,7 +260,7 @@ public class Connect_4Test {
     /* Test cases for check3Winner() */
 
     @Test
-    public void horizontalCheckLeft() {
+    public void horizontal3CheckLeft() {
         Connect_4 connect_4 = new Connect_4(horizontal3Left);
         int expected = 3;
         int value = connect_4.check3Winner(CROSS);
@@ -215,8 +269,27 @@ public class Connect_4Test {
     }
 
     @Test
-    public void horizontalCheckRight() {
+    public void horizontal3CheckRight() {
         Connect_4 connect_4 = new Connect_4(horizontal3Right);
+        int expected = 3;
+        int value = connect_4.check3Winner(CROSS);
+
+        assertEquals(expected, value);
+    }
+
+    @Test
+    public void horizontal3CheckTOP() {
+        Connect_4 connect_4 = new Connect_4(horizontal3Top);
+        int expected = 3;
+        int value = connect_4.check3Winner(CROSS);
+
+        assertEquals(expected, value);
+    }
+
+
+    @Test
+    public void Horizontal3LeftTop() {
+        Connect_4 connect_4 = new Connect_4(horizontal3LeftTop);
         int expected = 3;
         int value = connect_4.check3Winner(CROSS);
 
@@ -233,6 +306,15 @@ public class Connect_4Test {
     }
 
     @Test
+    public void verticalCheckTop() {
+        Connect_4 connect_4 = new Connect_4(vertical3Top);
+        int expected = 6;
+        int value = connect_4.check3Winner(CROSS);
+
+        assertEquals(expected, value);
+    }
+
+    @Test
     public void verticalCheckLeft() {
         Connect_4 connect_4 = new Connect_4(vertical3Left);
         int expected = 0;
@@ -241,9 +323,10 @@ public class Connect_4Test {
         assertEquals(expected, value);
     }
 
+    @Test
     public void diagonal3LeftCorner() {
         Connect_4 connect_4 = new Connect_4(diagonal3LeftCorner);
-        int expected = 4;
+        int expected = 3;
         int value = connect_4.check3Winner(CROSS);
 
         assertEquals(expected, value);
@@ -258,6 +341,26 @@ public class Connect_4Test {
         assertEquals(expected, value);
     }
 
+    @Test
+    public void diagonal3RightTop() {
+        Connect_4 connect_4 = new Connect_4(diagonal3RightTop);
+        int expected = 6;
+        int value = connect_4.check3Winner(CROSS);
+
+        assertEquals(expected, value);
+    }
+
+    @Test
+    public void diagonal3TopDown() {
+        Connect_4 connect_4 = new Connect_4(diagonal3TopDown);
+        int expected = 3;
+        int value = connect_4.check3Winner(CROSS);
+
+        assertEquals(expected, value);
+    }
+
+
+    @Test
     public void inverseDiagonal3LeftCorner() {
         Connect_4 connect_4 = new Connect_4(inverseDiagonal3LeftCorner);
         int expected = 3;
@@ -275,6 +378,14 @@ public class Connect_4Test {
         assertEquals(expected, value);
     }
 
+    @Test
+    public void InverseDiagonal3BottomTop() {
+        Connect_4 connect_4 = new Connect_4(inverseDiagonal3BottomTop);
+        int expected = 3;
+        int value = connect_4.check3Winner(CROSS);
+
+        assertEquals(expected, value);
+    }
     /* Test cases for checkWinner() */
 
     @Test
@@ -347,4 +458,78 @@ public class Connect_4Test {
         assertTrue(value);
     }
 
+    /* Test cases for anyMovesPossible() */
+
+    @Test
+    public void movePossibleFirstRow() {
+        Connect_4 connect_4 = new Connect_4(boardInit);
+        boolean value = connect_4.anyMovesPossible(1);
+
+        assertTrue(value);
+    }
+
+    @Test
+    public void movePossibleSecondRow() {
+        Connect_4 connect_4 = new Connect_4(boardInit);
+        boolean value = connect_4.anyMovesPossible(2);
+
+        assertTrue(value);
+    }
+
+    @Test
+    public void movePossibleThirdRow() {
+        Connect_4 connect_4 = new Connect_4(boardInit);
+        boolean value = connect_4.anyMovesPossible(3);
+
+        assertTrue(value);
+    }
+
+    @Test
+    public void movePossibleFourthRow() {
+        Connect_4 connect_4 = new Connect_4(boardInit);
+        boolean value = connect_4.anyMovesPossible(4);
+
+        assertTrue(value);
+    }
+
+    @Test
+    public void movePossibleFifthRow() {
+        Connect_4 connect_4 = new Connect_4(boardInit);
+        boolean value = connect_4.anyMovesPossible(5);
+
+        assertTrue(value);
+    }
+
+    @Test
+    public void movePossibleSixthRow() {
+        Connect_4 connect_4 = new Connect_4(boardInit);
+        boolean value = connect_4.anyMovesPossible(6);
+
+        assertTrue(value);
+    }
+
+    @Test
+    public void movePossibleZeroRow() {
+        Connect_4 connect_4 = new Connect_4(boardInit);
+        boolean value = connect_4.anyMovesPossible(0);
+
+        assertTrue(value);
+    }
+
+    @Test
+    public void movePossibleNegOneRow() {
+        Connect_4 connect_4 = new Connect_4(boardInit);
+        boolean value = connect_4.anyMovesPossible(-1);
+
+        assertFalse(value);
+    }
+
+    @Test
+    public void movePossibleSeventhRow() {
+        Connect_4 connect_4 = new Connect_4(boardInit);
+        boolean value = connect_4.anyMovesPossible(7);
+
+        assertFalse(value);
+    }
 }
+
