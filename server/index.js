@@ -249,6 +249,7 @@ app.get("/tic_tac_toe_restart/:host/:user", function (req, res) {
 			else {
 				game.state = "RESTART";
 				game.col = "-1";
+				game.row = "-1";
 				res.send("State set to RESTART!");
 			}
 		}
@@ -358,6 +359,39 @@ app.get("/hangman_join/:host/:client", function (req, res) {
 	}
 });
 
+app.get("/hangman_restart/:host/:user", function (req, res) {
+	console.log("GET:");
+	console.log(req.originalUrl);
+	var host = req.params.host;
+	var user = req.params.user;
+	if (host in hangman_games) {
+		var game = hangman_games[host];
+		if (checkPlayer(user, game)) {
+			console.log(hangman_games[host]);
+			if ("state" in game && game.state == "RESTART") {
+				delete game.state;
+				res.send("State removed!");
+			}
+			else {
+				game.state = "RESTART";
+				var words = getWords();
+				game.words = words;
+				delete game.winner;
+				res.send("State set to RESTART!");
+			}
+		}
+		else {
+			console.log("Player not found in game: " + user);
+			res.send("Player not found in game: " + user);
+		}
+	}
+	else {
+		console.log("Error: host not found");
+		res.send("Error: host not found");
+	}		
+	console.log();
+});
+
 app.post("/hangman_done/:host/:client/:score/:numErrors", function(req, res) {
 	var host = req.params.host;
 	var client = req.params.client;
@@ -392,7 +426,8 @@ app.post("/hangman_done/:host/:client/:score/:numErrors", function(req, res) {
 			}
 		}
 	}
-
+	
+	res.send("No error");
 	console.log(game);
 });
 

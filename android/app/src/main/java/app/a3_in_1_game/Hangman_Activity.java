@@ -72,6 +72,7 @@ public class Hangman_Activity extends AppCompatActivity {
     private int numErrors;
     private TextView textView;
     private SharedPreferences sharedPref;
+    private boolean waiting = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,87 +109,154 @@ public class Hangman_Activity extends AppCompatActivity {
         }
     }
 
+    protected void restartState() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String req = url + "/hangman_restart/" + host + "/" + user;
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, req,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                if (response.equals("State set to RESTART!") ||
+                                        response.equals("State removed!")) {
+                                    run = true;
+                                    winner = null;
+                                    indexInWordsList = 0;
+                                    update();
+                                } else {
+                                    Toast.makeText(context, "ERROR", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, "(restartState) " + error.toString(),
+                                Toast.LENGTH_SHORT).show();
+                        System.err.println("(restartState) " + error.toString());
+                    }
+                });
+                stringRequest.setTag(this);
+                MySingleton.getInstance(context).addToRequestQueue(stringRequest);
+            }
+        }).start();
+    }
+
     protected void update() {
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                String req = url + "/hangman/" + host + "/" + user;
+                final String req = url + "/hangman/" + host + "/" + user;
                 System.err.println(req);
                 while (winner == null && run) {
                     JsonObjectRequest jsonObjectRequest =
                             new JsonObjectRequest(Request.Method.GET, req, null, new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
-                                    try {
-                                        System.err.println("RESPONSE: " + response.toString());
-                                        winner = response.getString("winner");
-                                        if (winner != null) {
-                                            ((Hangman_Activity) context).runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                                    //display who won
-                                                    if (winner.equals(user)) {
-                                                        // Display Alert Dialog
-                                                        builder.setTitle("You Win!");
-                                                        builder.setMessage("\nYour score increased to " + ++score + "\nThe answer was: " + currWord + "\n");
-                                                        builder.setPositiveButton("Play Again",
-                                                                new DialogInterface.OnClickListener() {
-                                                                    public void onClick(DialogInterface dialog, int id) {
-                                                                        Hangman_Activity.this.playGame();
-                                                                    }
-                                                                });
-                                                        String message = "Score: " + score;
-                                                        textView.setText(message);
-                                                        builder.setNegativeButton("Exit",
-                                                                new DialogInterface.OnClickListener() {
-                                                                    public void onClick(DialogInterface dialog, int id) {
-                                                                        Hangman_Activity.this.finish();
-                                                                    }
-                                                                });
-                                                    } else if (winner.equals("tie")) {
-                                                        // Display Alert Dialog
-                                                        builder.setTitle("You Win!");
-                                                        builder.setMessage("\nYour score increased to " + ++score + "\nThe answer was: " + currWord + "\n");
-                                                        builder.setPositiveButton("Play Again",
-                                                                new DialogInterface.OnClickListener() {
-                                                                    public void onClick(DialogInterface dialog, int id) {
-                                                                        Hangman_Activity.this.playGame();
-                                                                    }
-                                                                });
-                                                        String message = "Score: " + score;
-                                                        textView.setText(message);
-                                                        builder.setNegativeButton("Exit",
-                                                                new DialogInterface.OnClickListener() {
-                                                                    public void onClick(DialogInterface dialog, int id) {
-                                                                        Hangman_Activity.this.finish();
-                                                                    }
-                                                                });
-                                                    } else {
-                                                        // Display Alert Dialog
-                                                        builder.setTitle("You lose!");
-                                                        builder.setMessage("Score decreased to " + --score + "\nThe answer was: " + currWord + "\n");
-                                                        builder.setPositiveButton("Play Again",
-                                                                new DialogInterface.OnClickListener() {
-                                                                    public void onClick(DialogInterface dialog, int id) {
-                                                                        Hangman_Activity.this.playGame();
-                                                                    }
-                                                                });
-                                                        String message = "Score: " + score;
-                                                        textView.setText(message);
-                                                        builder.setNegativeButton("Exit",
-                                                                new DialogInterface.OnClickListener() {
-                                                                    public void onClick(DialogInterface dialog, int id) {
-                                                                        Hangman_Activity.this.finish();
-                                                                    }
-                                                                });
-                                                    }
-                                                    builder.show();
-                                                }
-                                            });
+                                    System.err.println("RESPONSE: " + response.toString());
+                                    String state;
+                                    if (wordsList[0].equals("") && !waiting) {
+                                        // need new words
+                                        waiting = true;
+                                        getWordsList();
+                                        return;
+                                    }
+                                    if (wordsList[0].equals("") && waiting) {
+                                        try {
+                                            Thread.sleep(1000);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
                                         }
+                                        return;
+                                    }
+                                    if (!wordsList[0].equals("") && waiting) {
+                                        waiting = false;
+                                        run = false;
+                                        return;
+                                    }
+                                    try {
+                                        state = response.getString("state");
                                     } catch (JSONException e) {
-                                        e.printStackTrace();
+                                        state = null;
+                                    }
+                                    if (state != null && state.equals("RESTART")) {
+                                        // 1st player is waiting for 2nd player to hit restart
+                                        return;
+                                    }
+
+                                    try {
+                                        winner = response.getString("winner");
+                                    } catch (JSONException e) {
+                                        winner = null;
+                                    }
+
+                                    if (winner != null) {
+                                        (Hangman_Activity.this).runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                                //display who won
+                                                if (winner.equals(user)) {
+                                                    // Display Alert Dialog
+                                                    builder.setTitle("You Win!");
+                                                    builder.setMessage("\nYour score increased to " + ++score + "\nThe answer was: " + currWord + "\n");
+                                                    builder.setPositiveButton("Play Again",
+                                                            new DialogInterface.OnClickListener() {
+                                                                public void onClick(DialogInterface dialog, int id) {
+                                                                    wordsList[0] = "";
+                                                                    restartState();
+                                                                }
+                                                            });
+                                                    String message = "Score: " + score;
+                                                    textView.setText(message);
+                                                    builder.setNegativeButton("Exit",
+                                                            new DialogInterface.OnClickListener() {
+                                                                public void onClick(DialogInterface dialog, int id) {
+                                                                    Hangman_Activity.this.finish();
+                                                                }
+                                                            });
+                                                } else if (winner.equals("tie")) {
+                                                    // Display Alert Dialog
+                                                    builder.setTitle("You Win!");
+                                                    builder.setMessage("\nYour score increased to " + ++score + "\nThe answer was: " + currWord + "\n");
+                                                    builder.setPositiveButton("Play Again",
+                                                            new DialogInterface.OnClickListener() {
+                                                                public void onClick(DialogInterface dialog, int id) {
+                                                                    wordsList[0] = "";
+                                                                    restartState();
+                                                                }
+                                                            });
+                                                    String message = "Score: " + score;
+                                                    textView.setText(message);
+                                                    builder.setNegativeButton("Exit",
+                                                            new DialogInterface.OnClickListener() {
+                                                                public void onClick(DialogInterface dialog, int id) {
+                                                                    Hangman_Activity.this.finish();
+                                                                }
+                                                            });
+                                                } else {
+                                                    // Display Alert Dialog
+                                                    builder.setTitle("You lose!");
+                                                    builder.setMessage("Score decreased to " + --score + "\nThe answer was: " + currWord + "\n");
+                                                    builder.setPositiveButton("Play Again",
+                                                            new DialogInterface.OnClickListener() {
+                                                                public void onClick(DialogInterface dialog, int id) {
+                                                                    wordsList[0] = "";
+                                                                    restartState();
+                                                                }
+                                                            });
+                                                    String message = "Score: " + score;
+                                                    textView.setText(message);
+                                                    builder.setNegativeButton("Exit",
+                                                            new DialogInterface.OnClickListener() {
+                                                                public void onClick(DialogInterface dialog, int id) {
+                                                                    Hangman_Activity.this.finish();
+                                                                }
+                                                            });
+                                                }
+                                                builder.show();
+                                            }
+                                        });
                                     }
                                 }
                             }, new Response.ErrorListener() {
@@ -258,9 +326,10 @@ public class Hangman_Activity extends AppCompatActivity {
                                             disableBtns();
                                         }
                                     });
+                                    run = true;
                                     post(numWordsGuessed, totalNumWrongGuesses);
                                 }
-                            }, 60000);
+                            }, 30000);
 
                             playGame();
                         } catch (JSONException e) {
