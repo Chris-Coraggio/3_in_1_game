@@ -100,6 +100,7 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                                             state = null;
                                         }
                                         if (!inProgress && state == null) {
+                                            // 1st player to hit restart
                                             run = false;
                                             (Connect_4_Acitivity.this).runOnUiThread(new Runnable() {
                                                 @Override
@@ -110,8 +111,8 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                                             });
                                             return;
                                         } else if (!inProgress && state.equals("RESTART")) {
-                                            run = false;
                                             // 2nd player to hit restart
+                                            run = false;
                                             (Connect_4_Acitivity.this).runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -152,7 +153,7 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                     jsonObjectRequest.setTag(this);
                     MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -234,7 +235,6 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                     text = "Score: " + score;
                     scoreText.setText(text);
                     reset();
-                    // TODO FORFEIT IN MULTIPLAYER???
                 } else {
                     // Game ended
                     if (!multiplayer) {

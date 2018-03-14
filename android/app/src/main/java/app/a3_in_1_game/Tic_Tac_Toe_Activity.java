@@ -42,11 +42,42 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
     private int score = 0;
     private SharedPreferences sharedPref;
 
+    protected void restartState() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String req = url + "/tic_tac_toe_restart/" + host + "/" + user;
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, req,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                if (response.equals("State set to RESTART!") ||
+                                        response.equals("State removed!")) {
+                                    run = true;
+                                    update();
+                                } else {
+                                    Toast.makeText(context, "ERROR", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, "(restartState) " + error.toString(),
+                                Toast.LENGTH_SHORT).show();
+                        System.err.println("(restartState) " + error.toString());
+                    }
+                });
+                stringRequest.setTag(this);
+                MySingleton.getInstance(context).addToRequestQueue(stringRequest);
+            }
+        }).start();
+    }
+
     protected void update() {
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                String req = url + "/tic_tac_toe/" + host + "/" + user;
+                final String req = url + "/tic_tac_toe/" + host + "/" + user;
                 System.err.println(req);
                 while (!myTurn && run) {
                     JsonObjectRequest jsonObjectRequest =
@@ -55,6 +86,63 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                                 public void onResponse(JSONObject response) {
                                     try {
                                         System.err.println("RESPONSE: " + response.toString());
+                                        if (myTurn) {
+                                            return;
+                                        }
+                                        String state;
+                                        try {
+                                            state = response.getString("state");
+                                        }
+                                        catch (JSONException e) {
+                                            state = null;
+                                        }
+                                        if (t.gameOver() && state == null) {
+                                            // 1st player to hit restart
+                                            run = false;
+                                            (Tic_Tac_Toe_Activity.this).runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    t.playGame();
+                                                    b1.setText("");
+                                                    b2.setText("");
+                                                    b3.setText("");
+                                                    b4.setText("");
+                                                    b5.setText("");
+                                                    b6.setText("");
+                                                    b7.setText("");
+                                                    b8.setText("");
+                                                    b9.setText("");
+                                                    restartState();
+                                                }
+                                            });
+                                            return;
+                                        }
+                                        else if (t.gameOver() && state.equals("RESTART")) {
+                                            // 2nd player to hit restart
+                                            run = false;
+                                            (Tic_Tac_Toe_Activity.this).runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    t.playGame();
+                                                    b1.setText("");
+                                                    b2.setText("");
+                                                    b3.setText("");
+                                                    b4.setText("");
+                                                    b5.setText("");
+                                                    b6.setText("");
+                                                    b7.setText("");
+                                                    b8.setText("");
+                                                    b9.setText("");
+                                                    restartState();
+                                                }
+                                            });
+                                            return;
+                                        }
+                                        else if (!t.gameOver() && state != null
+                                                && state.equals("RESTART")) {
+                                            // 1st player is waiting for 2nd player to hit restart
+                                            return;
+                                        }
                                         myTurn = Objects.equals(response.getString("turn"), user);
                                         if (myTurn) {
                                             setCol = response.getInt("col");
@@ -75,6 +163,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                                                             Toast toast = Toast.makeText(context, text, duration);
                                                             toast.show();
                                                             b10.setText(R.string.restart);
+                                                            b10.setVisibility(View.VISIBLE);
                                                             score++;
                                                         }
                                                         if (t.spacesOccupied == 9) {
@@ -83,6 +172,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                                                             int duration = Toast.LENGTH_SHORT;
                                                             score++;
                                                             b10.setText(R.string.restart);
+                                                            b10.setVisibility(View.VISIBLE);
                                                             Toast toast = Toast.makeText(context, text, duration);
                                                             toast.show();
                                                         }
@@ -105,7 +195,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     jsonObjectRequest.setTag(this);
                     MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -126,7 +216,12 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         if (response.equals("Move successful!")) {
-                            update();
+                            if (t.gameOver()) {
+                                run = false;
+                            }
+                            else {
+                                update();
+                            }
                         } else {
                             Toast.makeText(context, "ERROR", Toast.LENGTH_SHORT).show();
                         }
@@ -180,19 +275,27 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Tic_Tac_Toe t = new Tic_Tac_Toe();
-                t.playGame();
-                b1.setText("");
-                b2.setText("");
-                b3.setText("");
-                b4.setText("");
-                b5.setText("");
-                b6.setText("");
-                b7.setText("");
-                b8.setText("");
-                b9.setText("");
+                if (!multiplayer) {
+                    t.playGame();
+                    b1.setText("");
+                    b2.setText("");
+                    b3.setText("");
+                    b4.setText("");
+                    b5.setText("");
+                    b6.setText("");
+                    b7.setText("");
+                    b8.setText("");
+                    b9.setText("");
+                }
                 score--;
                 String message = "score: " + score;
                 textView.setText(message);
+                if (multiplayer) {
+                    run = true;
+                    myTurn = false;
+                    update();
+                    b10.setVisibility(View.GONE);
+                }
                 //  Context context = getApplicationContext();
                 //   CharSequence text = "Score Decreased!";
                 //   int duration = Toast.LENGTH_SHORT;
@@ -202,6 +305,9 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                 b10.setText(R.string.forfeit);
             }
         });
+        if (multiplayer) {
+            b10.setVisibility(View.GONE);
+        }
 
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,6 +326,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         updateScore(1);
                         b10.setText(R.string.restart);
                         score++;
+                        b10.setVisibility(View.VISIBLE);
                         return;
                     }
                     boolean check = t.computerTurn();
@@ -233,6 +340,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
                         b10.setText(R.string.restart);
+                        b10.setVisibility(View.VISIBLE);
                         score++;
                     }
                     if (check) {
@@ -241,6 +349,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         int duration = Toast.LENGTH_SHORT;
                         score++;
                         b10.setText(R.string.restart);
+                        b10.setVisibility(View.VISIBLE);
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
                     } else if (!multiplayer) {
@@ -266,6 +375,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         updateScore(1);
                         b10.setText(R.string.restart);
                         score++;
+                        b10.setVisibility(View.VISIBLE);
                         return;
                     }
                     boolean check = t.computerTurn();
@@ -279,6 +389,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
                         b10.setText(R.string.restart);
+                        b10.setVisibility(View.VISIBLE);
                         score++;
                     }
                     if (check) {
@@ -287,6 +398,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         int duration = Toast.LENGTH_SHORT;
                         score++;
                         b10.setText(R.string.restart);
+                        b10.setVisibility(View.VISIBLE);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -313,6 +425,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         updateScore(1);
                         b10.setText(R.string.restart);
                         score++;
+                        b10.setVisibility(View.VISIBLE);
                         return;
                     }
                     boolean check = t.computerTurn();
@@ -327,6 +440,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         toast.show();
                         b10.setText(R.string.restart);
                         score++;
+                        b10.setVisibility(View.VISIBLE);
                     }
                     if (check) {
                         context = getApplicationContext();
@@ -334,6 +448,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         int duration = Toast.LENGTH_SHORT;
                         score++;
                         b10.setText(R.string.restart);
+                        b10.setVisibility(View.VISIBLE);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -360,6 +475,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         updateScore(1);
                         b10.setText(R.string.restart);
                         score++;
+                        b10.setVisibility(View.VISIBLE);
                         return;
                     }
                     boolean check = t.computerTurn();
@@ -374,6 +490,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         toast.show();
                         b10.setText(R.string.restart);
                         score++;
+                        b10.setVisibility(View.VISIBLE);
                     }
                     if (check) {
                         context = getApplicationContext();
@@ -381,6 +498,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         int duration = Toast.LENGTH_SHORT;
                         score++;
                         b10.setText(R.string.restart);
+                        b10.setVisibility(View.VISIBLE);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -408,6 +526,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         updateScore(1);
                         b10.setText(R.string.restart);
                         score++;
+                        b10.setVisibility(View.VISIBLE);
                         return;
                     }
                     boolean check = t.computerTurn();
@@ -422,6 +541,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         toast.show();
                         b10.setText(R.string.restart);
                         score++;
+                        b10.setVisibility(View.VISIBLE);
                     }
                     if (check) {
                         context = getApplicationContext();
@@ -429,6 +549,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         int duration = Toast.LENGTH_SHORT;
                         score++;
                         b10.setText(R.string.restart);
+                        b10.setVisibility(View.VISIBLE);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -455,6 +576,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         updateScore(1);
                         b10.setText(R.string.restart);
                         score++;
+                        b10.setVisibility(View.VISIBLE);
                         return;
                     }
                     boolean check = t.computerTurn();
@@ -469,6 +591,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         toast.show();
                         b10.setText(R.string.restart);
                         score++;
+                        b10.setVisibility(View.VISIBLE);
                     }
                     if (check) {
                         context = getApplicationContext();
@@ -476,6 +599,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         int duration = Toast.LENGTH_SHORT;
                         score++;
                         b10.setText(R.string.restart);
+                        b10.setVisibility(View.VISIBLE);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -502,6 +626,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         updateScore(1);
                         b10.setText(R.string.restart);
                         score++;
+                        b10.setVisibility(View.VISIBLE);
                         return;
                     }
                     boolean check = t.computerTurn();
@@ -516,6 +641,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         toast.show();
                         b10.setText(R.string.restart);
                         score++;
+                        b10.setVisibility(View.VISIBLE);
                     }
                     if (check) {
                         context = getApplicationContext();
@@ -523,6 +649,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         int duration = Toast.LENGTH_SHORT;
                         score++;
                         b10.setText(R.string.restart);
+                        b10.setVisibility(View.VISIBLE);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -549,6 +676,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         updateScore(1);
                         b10.setText(R.string.restart);
                         score++;
+                        b10.setVisibility(View.VISIBLE);
                         return;
                     }
                     boolean check = t.computerTurn();
@@ -563,6 +691,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         toast.show();
                         b10.setText(R.string.restart);
                         score++;
+                        b10.setVisibility(View.VISIBLE);
                     }
                     if (check) {
                         context = getApplicationContext();
@@ -570,6 +699,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         int duration = Toast.LENGTH_SHORT;
                         score++;
                         b10.setText(R.string.restart);
+                        b10.setVisibility(View.VISIBLE);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
@@ -594,6 +724,9 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     post(2, 2);
                     if (t.gameOver()) {
                         updateScore(1);
+                        b10.setText(R.string.restart);
+                        score++;
+                        b10.setVisibility(View.VISIBLE);
                         return;
                     }
                     boolean check = t.computerTurn();
@@ -604,6 +737,10 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         score--;
                         String message = "score: " + score;
                         textView.setText(message);
+                        b10.setText(R.string.restart);
+                        score++;
+                        b10.setVisibility(View.VISIBLE);
+
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
                     }
@@ -613,6 +750,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         int duration = Toast.LENGTH_SHORT;
                         score++;
                         b10.setText(R.string.restart);
+                        b10.setVisibility(View.VISIBLE);
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();

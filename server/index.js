@@ -233,6 +233,37 @@ app.get("/tic_tac_toe_join/:host/:client", function (req, res) {
 	}
 });
 
+app.get("/tic_tac_toe_restart/:host/:user", function (req, res) {
+	console.log("GET:");
+	console.log(req.originalUrl);
+	var host = req.params.host;
+	var user = req.params.user;
+	if (host in tic_tac_toe_games) {
+		var game = tic_tac_toe_games[host];
+		if (checkPlayer(user, game)) {
+			console.log(tic_tac_toe_games[host]);
+			if ("state" in game && game.state == "RESTART") {
+				delete game.state;
+				res.send("State removed!");
+			}
+			else {
+				game.state = "RESTART";
+				game.col = "-1";
+				res.send("State set to RESTART!");
+			}
+		}
+		else {
+			console.log("Player not found in game: " + user);
+			res.send("Player not found in game: " + user);
+		}
+	}
+	else {
+		console.log("Error: host not found");
+		res.send("Error: host not found");
+	}		
+	console.log();
+});
+
 app.get("/tic_tac_toe/:host/:user", function (req, res) {
 	console.log("GET:");
 	console.log(req.originalUrl);
