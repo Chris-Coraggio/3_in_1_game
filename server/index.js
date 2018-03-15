@@ -407,7 +407,7 @@ app.post("/hangman_done/:host/:client/:score/:numErrors", function(req, res) {
 	if(game.client == client){
 		game.client_score = score;
 		game.client_errors = numErrors;
-	}else if(game.host == host){
+	}else if(game.host == client){
 		game.host_score = score;
 		game.host_errors = numErrors;
 	}

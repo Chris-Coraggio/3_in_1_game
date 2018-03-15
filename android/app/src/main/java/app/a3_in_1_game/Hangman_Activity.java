@@ -37,6 +37,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static app.a3_in_1_game.Hangman.currentWord;
+import static app.a3_in_1_game.Hangman.numWrongWordGuesses;
 
 public class Hangman_Activity extends AppCompatActivity {
     private static int MAX_NUM_WORDS_MULTIPLAYER = 20;
@@ -123,6 +124,8 @@ public class Hangman_Activity extends AppCompatActivity {
                                     run = true;
                                     winner = null;
                                     indexInWordsList = 0;
+                                    numWordsGuessed = 0;
+                                    numWrongWordGuesses = 0;
                                     update();
                                 } else {
                                     Toast.makeText(context, "ERROR", Toast.LENGTH_SHORT).show();
