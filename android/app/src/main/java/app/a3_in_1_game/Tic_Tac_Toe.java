@@ -427,7 +427,6 @@ public class Tic_Tac_Toe {
 
     //calculates whether the game has ended
     public boolean gameOver() {
-
         //see if board is full
         //printBoard();
 

@@ -96,7 +96,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                                         catch (JSONException e) {
                                             state = null;
                                         }
-                                        if (t.gameOver() && state == null) {
+                                        if ((t.gameOver() || t.spacesOccupied == 9) && state == null) {
                                             // 1st player to hit restart
                                             run = false;
                                             (Tic_Tac_Toe_Activity.this).runOnUiThread(new Runnable() {
@@ -117,7 +117,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                                             });
                                             return;
                                         }
-                                        else if (t.gameOver() && state.equals("RESTART")) {
+                                        else if ((t.gameOver() || t.spacesOccupied == 9) && state.equals("RESTART")) {
                                             // 2nd player to hit restart
                                             run = false;
                                             (Tic_Tac_Toe_Activity.this).runOnUiThread(new Runnable() {
@@ -216,7 +216,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         if (response.equals("Move successful!")) {
-                            if (t.gameOver()) {
+                            if (t.gameOver() || t.spacesOccupied == 9) {
                                 run = false;
                             }
                             else {

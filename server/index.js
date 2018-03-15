@@ -370,6 +370,10 @@ app.get("/hangman_restart/:host/:user", function (req, res) {
 			console.log(hangman_games[host]);
 			if ("state" in game && game.state == "RESTART") {
 				delete game.state;
+				delete game.client_errors;
+				delete game.client_score;
+				delete game.host_errors;
+				delete game.host_score;
 				res.send("State removed!");
 			}
 			else {
@@ -403,7 +407,7 @@ app.post("/hangman_done/:host/:client/:score/:numErrors", function(req, res) {
 	if(game.client == client){
 		game.client_score = score;
 		game.client_errors = numErrors;
-	}else if(game.host == client){
+	}else if(game.host == host){
 		game.host_score = score;
 		game.host_errors = numErrors;
 	}
