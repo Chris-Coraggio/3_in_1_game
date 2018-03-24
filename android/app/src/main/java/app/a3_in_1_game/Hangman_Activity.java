@@ -439,6 +439,7 @@ public class Hangman_Activity extends AppCompatActivity {
         view.setEnabled(false);
         boolean guessedRight = false;
         view.setBackgroundResource(R.drawable.letter_down);
+        letterChar = 'a';
         for (int k = 0; k < currWord.length(); k++) {
             if (currWord.charAt(k) == letterChar) {
                 numCorr++;
