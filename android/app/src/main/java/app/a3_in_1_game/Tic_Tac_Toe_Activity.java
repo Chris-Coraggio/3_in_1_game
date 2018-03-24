@@ -206,7 +206,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
         if (!multiplayer) {
             return;
         }
-        String req = url + "/tic_tac_toe/" + host + "/" + user + "/" + row + "-" + col;
+        String req = url + "/tic_tac_toe/" + host + "/" + user + "/" + col + "-" + row;
         System.err.println(req);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, req,
                 new Response.Listener<String>() {
