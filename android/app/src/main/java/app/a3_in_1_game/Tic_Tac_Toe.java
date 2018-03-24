@@ -431,41 +431,42 @@ public class Tic_Tac_Toe {
         //printBoard();
 
         //see if someone won on the first row
-        if ((board[0][0] == board[0][1]) && (board[0][0] == board[0][2]) && (board[0][0] != OPEN)) {
+        if ((board[0][0] != OPEN) && (board[0][1] != OPEN) && (board[0][2] != OPEN)) {
             return true;
         }
 
         //see if someone won on the second row
-        if ((board[1][0] == board[1][1]) && (board[1][0] == board[1][2]) && (board[1][0] != OPEN)) {
+        if ((board[1][0] != OPEN) && (board[1][1] != OPEN) && (board[1][2] != OPEN)) {
             return true;
         }
 
         //see if someone won on the third row
-        if ((board[2][0] == board[2][1]) && (board[2][0] == board[2][2]) && (board[2][0] != OPEN)) {
+        if ((board[2][0] != OPEN) && (board[2][1] != OPEN) && (board[2][2] != OPEN)) {
             return true;
         }
 
         //see if someone won on the first column
-        if ((board[0][0] == board[1][0]) && (board[0][0] == board[2][0]) && (board[0][0] != OPEN)) {
+        if ((board[0][0] != OPEN) && (board[1][0] != OPEN) && (board[2][0] != OPEN)) {
             return true;
         }
 
         //see if someone won on the second column
-        if ((board[0][1] == board[1][1]) && (board[0][1] == board[2][1]) && (board[0][1] != OPEN)) {
+        if ((board[0][1] != OPEN) && (board[1][1] != OPEN) && (board[2][1] != OPEN)) {
             return true;
         }
 
-        //see if someone won on the first column
-        if ((board[0][2] == board[1][2]) && (board[0][2] == board[2][2]) && (board[0][2] != OPEN)) {
+        //see if someone won on the third column
+        if ((board[0][2] != OPEN) && (board[1][2] != OPEN) && (board[2][2] != OPEN)) {
             return true;
         }
 
         //see if someone won on the first diagonal
-        if ((board[0][0] == board[1][1]) && (board[0][0] == board[2][2]) && (board[0][0] != OPEN)) {
+        if ((board[0][0] != OPEN) && (board[1][1] != OPEN) && (board[2][2] != OPEN)) {
             return true;
         }
 
         //see if someone won on the second diagonal
+        // proper implementation
         if ((board[0][2] == board[1][1]) && (board[0][2] == board[2][0]) && (board[0][2] != OPEN)) {
             return true;
         }
