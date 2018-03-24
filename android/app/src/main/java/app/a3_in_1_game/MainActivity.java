@@ -349,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
         run = new boolean[1];
 
         // Tic Tac Toe button
-        Button tic_tac_toe_launch = (Button) findViewById(R.id.buttonTicTacToe);
+        Button tic_tac_toe_launch = (Button) findViewById(R.id.hangman_launch);
         tic_tac_toe_launch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
@@ -419,7 +419,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Hangman button
-        Button hangman_launch = (Button) findViewById(R.id.hangman_launch);
+        Button hangman_launch = (Button) findViewById(R.id.buttonTicTacToe);
         hangman_launch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
