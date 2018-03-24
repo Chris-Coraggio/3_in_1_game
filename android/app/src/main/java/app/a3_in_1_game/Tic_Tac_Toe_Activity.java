@@ -715,7 +715,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     if (t.gameOver()) {
                         return;
                     }
-                    b9.setText("X");
+                    b9.setText("O");
                     t.playerTurn(2, 2);
                     post(2, 2);
                     if (t.gameOver()) {
