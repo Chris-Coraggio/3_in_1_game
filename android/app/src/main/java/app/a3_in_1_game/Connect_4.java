@@ -198,7 +198,7 @@ public class Connect_4 {
         if (player != CROSS && player != CIRCLE)
             return false;
 
-        if (location < 0 || location > 6)
+        if (location < 0 || location > 5)
             return false;
 
         for (int i = gameBoard.length - 1; i >= 0; i--) {
