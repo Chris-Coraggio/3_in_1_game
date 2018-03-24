@@ -252,6 +252,7 @@ public class MainActivity extends AppCompatActivity {
                                                 switch (game) {
                                                     case "Tic Tac Toe":
                                                         MySingleton.tic_tac_toe_host = input.getText().toString();
+                                                        MySingleton.tic_tac_toe_host = "deleteMe";
                                                         join(view, "Tic Tac Toe", user);
                                                         break;
                                                     case "Connect 4":
