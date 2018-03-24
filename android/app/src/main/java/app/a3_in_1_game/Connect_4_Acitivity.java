@@ -209,6 +209,7 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                     case MotionEvent.ACTION_POINTER_UP:
                     case MotionEvent.ACTION_UP: {
                         int col = getCol(motionEvent.getX());
+                        col = (col + 1) % Connect_4.NUM_COLS;
                         if (col != -1 && multiplayer && myTurn && inProgress) {
                             myTurn = false;
                             drop(col, connect_4.CROSS);

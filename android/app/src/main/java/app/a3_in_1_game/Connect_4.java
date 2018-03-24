@@ -20,8 +20,8 @@ public class Connect_4 {
     protected final char CIRCLE = 'O';
     private final char EMPTY = ' ';
 
-    protected final int NUM_ROWS = 6;
-    protected final int NUM_COLS = 7;
+    protected final static int NUM_ROWS = 6;
+    protected final static int NUM_COLS = 7;
 
     protected int lastRow = -1;
     protected int lastCol = -1;
