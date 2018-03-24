@@ -25,13 +25,13 @@ import static app.a3_in_1_game.Tic_Tac_Toe.AiCol;
 import static app.a3_in_1_game.Tic_Tac_Toe.AiRow;
 
 public class Tic_Tac_Toe_Activity extends AppCompatActivity {
-    private Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b10;
-    private TextView textView;
     private static boolean myTurn = false;
     final Tic_Tac_Toe t = new Tic_Tac_Toe();
     private final String url = MySingleton.url;
     public boolean multiplayer = MySingleton.tic_tac_toe_multiplayer;
     RequestQueue requestQueue;
+    private Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b10;
+    private TextView textView;
     private Thread thread;
     private boolean run;
     private String host = MySingleton.tic_tac_toe_host;
@@ -92,8 +92,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                                         String state;
                                         try {
                                             state = response.getString("state");
-                                        }
-                                        catch (JSONException e) {
+                                        } catch (JSONException e) {
                                             state = null;
                                         }
                                         if ((t.gameOver() || t.spacesOccupied == 9) && state == null) {
@@ -116,8 +115,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                                                 }
                                             });
                                             return;
-                                        }
-                                        else if ((t.gameOver() || t.spacesOccupied == 9) && state.equals("RESTART")) {
+                                        } else if ((t.gameOver() || t.spacesOccupied == 9) && state.equals("RESTART")) {
                                             // 2nd player to hit restart
                                             run = false;
                                             (Tic_Tac_Toe_Activity.this).runOnUiThread(new Runnable() {
@@ -137,8 +135,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                                                 }
                                             });
                                             return;
-                                        }
-                                        else if (!t.gameOver() && state != null
+                                        } else if (!t.gameOver() && state != null
                                                 && state.equals("RESTART")) {
                                             // 1st player is waiting for 2nd player to hit restart
                                             return;
@@ -218,8 +215,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                         if (response.equals("Move successful!")) {
                             if (t.gameOver() || t.spacesOccupied == 9) {
                                 run = false;
-                            }
-                            else {
+                            } else {
                                 update();
                             }
                         } else {
@@ -804,7 +800,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
 
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
-        score++;
+        score += 3;
         String message = "score: " + score;
         textView.setText(message);
     }
