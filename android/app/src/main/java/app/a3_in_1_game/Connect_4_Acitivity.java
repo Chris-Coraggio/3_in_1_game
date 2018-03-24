@@ -313,7 +313,7 @@ public class Connect_4_Acitivity extends AppCompatActivity {
             scoreText.setText(text);
         } else {
             winner = "BLACK";
-            score--;
+            score -= 2;
             text = "Score: " + score;
             scoreText.setText(text);
         }
