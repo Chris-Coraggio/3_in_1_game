@@ -122,7 +122,7 @@ public class Connect_4 {
         for (int j = 0; j < gameBoard[0].length; j++) {
             for (int i = gameBoard.length - 1; i > 2; i--) {
                 if (gameBoard[i][j]== currentPlayer && gameBoard[i - 1][j] == currentPlayer
-                        && gameBoard[i - 2][j] == currentPlayer && gameBoard[i - 3][j] == EMPTY) {
+                        && gameBoard[i - 2][j] == currentPlayer) {
                     System.out.println("checking vert");
                     return j;
                 }
@@ -171,11 +171,11 @@ public class Connect_4 {
             }
         }
 
-        //check horizontally row - works
+        //check horizontally row
         for (int i = gameBoard.length - 1; i >= 0; i--) {
             for (int j = 0; j < gameBoard[0].length - 3; j++) {
                 if (gameBoard[i][j] == currentPlayer && gameBoard[i][j + 1] == currentPlayer
-                        && gameBoard[i][j + 2] == currentPlayer && gameBoard[i][j + 3] == EMPTY) {
+                        && gameBoard[i][j + 2] == currentPlayer) {
                     System.out.println("horizontal");
                     return j + 3;
                 }
