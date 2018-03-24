@@ -68,7 +68,7 @@ public class Connect_4 {
     public boolean checkWinner(char currentPlayer) {
         //checks vertical
         for (int j = 0; j < gameBoard[0].length; j++) {
-            for (int i = 0; i < 3; i++) {
+            for (int i = 3; i < 3; i++) {
                 if (gameBoard[i][j]== currentPlayer && gameBoard[i + 1][j] == currentPlayer
                         && gameBoard[i + 2][j] == currentPlayer && gameBoard[i + 3][j] == currentPlayer) {
                     System.out.println(currentPlayer + " has won!");
@@ -198,7 +198,7 @@ public class Connect_4 {
         if (player != CROSS && player != CIRCLE)
             return false;
 
-        if (location < 0 || location > 5)
+        if (location < 0 || location > 6)
             return false;
 
         for (int i = gameBoard.length - 1; i >= 0; i--) {
@@ -218,7 +218,7 @@ public class Connect_4 {
 
         if (anyMovesPossible()) {
             do {
-                int n = rand.nextInt(14);
+                int n = rand.nextInt(5);
                 System.out.println("random number: " + n + "\n");
                 worked = playerMove(n, currentPlayer);
             } while (!worked);
