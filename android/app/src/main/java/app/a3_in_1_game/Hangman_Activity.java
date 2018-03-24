@@ -483,7 +483,9 @@ public class Hangman_Activity extends AppCompatActivity {
             }
         } else if (currPart < numParts) {
             //some guesses left
-            bodyParts[currPart].setVisibility(View.VISIBLE);
+            if (currPart != 1) {
+                bodyParts[currPart].setVisibility(View.VISIBLE);
+            }
             currPart++;
             if (multiplayer) {
                 totalNumWrongGuesses++;
