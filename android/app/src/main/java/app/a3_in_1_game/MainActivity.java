@@ -205,7 +205,11 @@ public class MainActivity extends AppCompatActivity {
         winBuild.setTitle("Singleplayer or Multiplayer?");
 
         // Singleplayer
-        winBuild.setNegativeButton("Singleplayer",
+        String text = "Singleplayer";
+        if (game.equals("Hangman")) {
+            text = "Multiplayer";
+        }
+        winBuild.setNegativeButton(text,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Intent intent;
@@ -230,7 +234,11 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         // Multiplayer
-        winBuild.setPositiveButton("Multiplayer",
+        text = "Multiplayer";
+        if (game.equals("Hangman")) {
+            text = "Singleplayer";
+        }
+        winBuild.setPositiveButton(text,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         winBuild.setNegativeButton("Host",
