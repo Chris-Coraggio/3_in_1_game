@@ -3,6 +3,7 @@ package app.a3_in_1_game;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -433,7 +434,7 @@ public class Hangman_Activity extends AppCompatActivity {
         }
     }
 
-    public void letterPressed(View view) {
+    public void letterPressed(final View view) {
         String ltr = (((TextView) view).getText().toString()).toLowerCase();
         char letterChar = ltr.charAt(0);
         view.setEnabled(false);
@@ -462,6 +463,8 @@ public class Hangman_Activity extends AppCompatActivity {
                     winBuild.setPositiveButton("Play Again",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
+                                    Intent intent = new Intent(view.getContext(), Tic_Tac_Toe_Activity.class);
+                                    startActivity(intent);
                                     Hangman_Activity.this.playGame();
                                 }
                             });
@@ -503,6 +506,8 @@ public class Hangman_Activity extends AppCompatActivity {
                 loseBuild.setPositiveButton("Play Again",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                Intent intent = new Intent(view.getContext(), Tic_Tac_Toe_Activity.class);
+                                startActivity(intent);
                                 Hangman_Activity.this.playGame();
                             }
                         });
