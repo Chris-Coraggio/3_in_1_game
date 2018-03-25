@@ -282,6 +282,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     b7.setText("");
                     b8.setText("");
                     b9.setText("");
+                    throw new NullPointerException("Error 420");
                 }
                 score--;
                 String message = "score: " + score;

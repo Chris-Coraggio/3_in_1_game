@@ -240,6 +240,7 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                     // Game ended
                     if (!multiplayer) {
                         reset();
+                        throw new NullPointerException("Error 420");
                     } else {
                         run = true;
                         myTurn = false;
