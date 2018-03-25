@@ -241,14 +241,22 @@ public class MainActivity extends AppCompatActivity {
         winBuild.setPositiveButton(text,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        winBuild.setNegativeButton("Host",
+                        String text = "Host";
+                        if (game.equals("Hangman")) {
+                            text = "Join";
+                        }
+                        winBuild.setNegativeButton(text,
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         // Host game
                                         host(view, game, user);
                                     }
                                 });
-                        winBuild.setPositiveButton("Join", new DialogInterface.OnClickListener() {
+                        text = "Join";
+                        if (game.equals("Hangman")) {
+                            text = "Host";
+                        }
+                        winBuild.setPositiveButton(text, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 final EditText input = new EditText(MainActivity.this);
                                 new AlertDialog.Builder(MainActivity.this)
