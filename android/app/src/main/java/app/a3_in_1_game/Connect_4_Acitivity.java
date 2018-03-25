@@ -133,7 +133,7 @@ public class Connect_4_Acitivity extends AppCompatActivity {
                                                 (Connect_4_Acitivity.this).runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        drop(setCol, connect_4.CIRCLE);
+                                                        drop(setCol, connect_4.CROSS);
                                                         setCol = -1;
                                                     }
                                                 });
