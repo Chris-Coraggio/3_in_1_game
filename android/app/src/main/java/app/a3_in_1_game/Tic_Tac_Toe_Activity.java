@@ -764,33 +764,32 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
         }
 
         if (row == 0 && col == 0) {
-            b1.setText("O");
+            b1.setText("X");
         }
         if (row == 0 && col == 1) {
-            b2.setText("O");
+            b2.setText("X");
         }
         if (row == 0 && col == 2) {
-            b3.setText("O");
+            b3.setText("X");
         }
         if (row == 1 && col == 0) {
-            b4.setText("O");
+            b4.setText("X");
         }
         if (row == 1 && col == 1) {
-            b5.setText("O");
+            b5.setText("X");
         }
         if (row == 1 && col == 2) {
-            b6.setText("O");
+            b6.setText("X");
         }
         if (row == 2 && col == 0) {
-            b7.setText("O");
+            b7.setText("X");
         }
         if (row == 2 && col == 1) {
-            b8.setText("O");
+            b8.setText("X");
         }
         if (row == 2 && col == 2) {
-            b9.setText("O");
+            b9.setText("X");
         }
-
     }
 
     public void updateScore(int player) {
