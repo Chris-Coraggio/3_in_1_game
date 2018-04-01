@@ -500,7 +500,7 @@ public class Hangman_Activity extends AppCompatActivity {
 
                 // Display Alert Dialog
                 AlertDialog.Builder loseBuild = new AlertDialog.Builder(this);
-                loseBuild.setTitle("You lose!");
+                loseBuild.setTitle("You Win!");
                 loseBuild.setMessage("Score decreased to " + --score + "\nThe answer was: " + currWord + "\n");
                 loseBuild.setPositiveButton("Play Again",
                         new DialogInterface.OnClickListener() {
