@@ -371,7 +371,7 @@ public class Hangman_Activity extends AppCompatActivity {
             trmp = bufferedReader.readLine();
         }
 
-        currentWord = "          ".toCharArray();
+        currentWord = trmp.toCharArray();
         String text = String.valueOf(currentWord);
         currWord = text.toLowerCase();
         System.out.println(text);
