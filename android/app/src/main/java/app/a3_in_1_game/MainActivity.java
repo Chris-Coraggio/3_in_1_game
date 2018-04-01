@@ -297,9 +297,8 @@ public class MainActivity extends AppCompatActivity {
                         winBuild.show();
                     }
                 });
-        if (!game.equals("Connect 4")) {
             winBuild.show();
-        }
+
     }
 
     protected void setUsername(final View view, final String game, final String user) {
