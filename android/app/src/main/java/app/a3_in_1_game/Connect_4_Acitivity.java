@@ -232,7 +232,7 @@ public class Connect_4_Acitivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (inProgress) {
                     // Game in progress
-                    score--;
+                    score++;
                     text = "Score: " + score;
                     scoreText.setText(text);
                     reset();
