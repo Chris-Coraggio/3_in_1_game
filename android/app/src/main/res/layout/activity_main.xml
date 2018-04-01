@@ -76,7 +76,19 @@
         android:textSize="15sp"
         android:background="@drawable/buttonshape3"
         />
+    <Button
+        android:text="Hangman"
+        android:layout_width="200dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="41dp"
+        android:id="@+id/random"
+        android:layout_below="@+id/hangman_launch"
+        android:layout_alignStart="@+id/hangman_launch"
 
+        android:textColor="#421E0C"
+        android:textSize="15sp"
+        android:background="@drawable/buttonshape3"
+        />
 
 
 
