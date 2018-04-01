@@ -333,7 +333,7 @@ public class Hangman_Activity extends AppCompatActivity {
                                     run = true;
                                     post(numWordsGuessed, totalNumWrongGuesses);
                                 }
-                            }, 30000);
+                            }, 30000 * 4);
 
                             playGame();
                         } catch (JSONException e) {
