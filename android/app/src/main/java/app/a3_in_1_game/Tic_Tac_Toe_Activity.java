@@ -415,7 +415,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
                     if (t.gameOver()) {
                         return;
                     }
-                    b3.setText("X");
+                    b3.setText("a");
                     t.playerTurn(0, 2);
                     post(0, 2);
                     if (t.gameOver()) {
@@ -771,7 +771,7 @@ public class Tic_Tac_Toe_Activity extends AppCompatActivity {
             b2.setText("O");
         }
         if (row == 0 && col == 2) {
-            b3.setText("O");
+            b3.setText("a");
         }
         if (row == 1 && col == 0) {
             b4.setText("O");
